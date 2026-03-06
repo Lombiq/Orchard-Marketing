@@ -18,10 +18,21 @@ public class UrlShorteningService : IUrlShorteningService
         _memoryCache = memoryCache;
     }
 
-    public Task<string> GetDestinationUrlAsync(string shortUrl) =>
-        _memoryCache.GetOrCreateAsync(
-            shortUrl,
-            async _ => (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl).FirstOrDefaultAsync()).DestinationUrl);
+    public async Task<string> GetDestinationUrlAsync(string shortUrl)
+    {
+        if (_memoryCache.TryGetValue(shortUrl, out string destinationUrl))
+        {
+            return destinationUrl;
+        }
+
+        destinationUrl = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl).FirstOrDefaultAsync())?.DestinationUrl;
+        if (!string.IsNullOrEmpty(destinationUrl))
+        {
+            _memoryCache.Set(shortUrl, destinationUrl);
+        }
+
+        return destinationUrl;
+    }
 
     public async Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart)
     {
