@@ -6,8 +6,6 @@ using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -107,17 +105,13 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 
     private async Task<string> GenerateRandomShortUrlAsync()
     {
-        // TODO: Move these into admin settings.
-        const int minLength = 10;
-        const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        using var rng = RandomNumberGenerator.Create();
-
         var isUnique = false;
         var randomShortUrl = string.Empty;
         while (!isUnique)
         {
-            randomShortUrl = new string(Enumerable.Repeat(validChars, minLength).Select(text => text[rng.Next(0, text.Length)]).ToArray());
+            var sourceString = $"{DateTime.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
+
+            randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
 
             if (!_memoryCache.TryGetValue($"/{randomShortUrl}", out _))
             {
