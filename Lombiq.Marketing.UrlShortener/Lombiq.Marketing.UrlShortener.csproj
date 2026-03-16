@@ -31,6 +31,7 @@
     <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ContentManagement" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ContentFields" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Contents" Version="2.1.0" />
     <PackageReference Include="OrchardCore.Title" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.1.0" />
   </ItemGroup>
