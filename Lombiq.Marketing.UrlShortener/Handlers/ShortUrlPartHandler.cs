@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
+using OrchardCore.Modules;
 using System;
 using System.Threading.Tasks;
 using YesSql;
@@ -17,6 +18,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     private readonly IUpdateModelAccessor _updateModelAccessor;
     private readonly ISession _session;
     private readonly IMemoryCache _memoryCache;
+    private readonly IClock _clock;
 
     private ShortUrlPart _previousShortUrlPart;
 
@@ -24,12 +26,14 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         IUrlShorteningService urlShorteningService,
         IUpdateModelAccessor updateModelAccessor,
         IMemoryCache memoryCache,
-        ISession session)
+        ISession session,
+        IClock clock)
     {
         _urlShorteningService = urlShorteningService;
         _updateModelAccessor = updateModelAccessor;
         _memoryCache = memoryCache;
         _session = session;
+        _clock = clock;
     }
 
     public override async Task InitializingAsync(InitializingContentContext context, ShortUrlPart part)
@@ -109,7 +113,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         var randomShortUrl = string.Empty;
         while (!isUnique)
         {
-            var sourceString = $"{DateTime.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
+            var sourceString = $"{_clock.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
 
             randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
 
