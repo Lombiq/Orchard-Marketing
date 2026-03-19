@@ -7,7 +7,6 @@ using OrchardCore.ContentManagement.Metadata;
 using OrchardCore.ContentManagement.Metadata.Settings;
 using OrchardCore.Data.Migration;
 using OrchardCore.Title.Models;
-using System;
 using System.Threading.Tasks;
 using YesSql.Sql;
 
@@ -60,7 +59,6 @@ public sealed class ShortUrlMigration : DataMigration
                         " It is used to identify the term of the traffic (for example: shoes, etc.).",
                 }))
         );
-
 
         await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(ShortUrlPart), part => part
             .WithField(nameof(ShortUrlPart.ShortUrl), field => field

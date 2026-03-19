@@ -10,7 +10,7 @@ using OrchardCore.Modules.Manifest;
 )]
 
 [assembly: Feature(
-    Id = FeatureIds.UrlShortener,
+    Id = FeatureIds.Base,
     Name = "Lombiq URL Shortener",
     Category = "Marketing",
     Description = "Adds a Short URL content type for managing short redirects.",
