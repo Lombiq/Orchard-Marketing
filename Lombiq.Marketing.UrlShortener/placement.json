@@ -1,0 +1,13 @@
+{
+  "ContentPart_Edit": [
+    {
+      "contentType": [ "ShortUrl" ],
+      "place": "Content:0#URL;0"
+    },
+    {
+      "contentType": [ "ShortUrl" ],
+      "differentiator": "ShortUrl-UtmPart",
+      "place": "Content:0#UTM Parameters;0"
+    }
+  ]
+}

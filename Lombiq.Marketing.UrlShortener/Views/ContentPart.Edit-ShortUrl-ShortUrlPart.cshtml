@@ -1,0 +1,16 @@
+@using Lombiq.Marketing.UrlShortener.Constants
+
+<script asp-name="@ResourceNames.ShortUrlEditorPreview" at="Foot"></script>
+
+@foreach (var shape in Model)
+{
+    @await DisplayAsync(shape)
+}
+
+<fieldset class="mb-3">
+    <label class="form-label">@T["Calculated short URL with UTM parameters"]</label>
+    <div class="d-flex align-items-start gap-2">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-short-url-preview-copy>@T["Copy"]</button>
+        <code class="form-control-plaintext text-break mb-0 d-inline" data-short-url-preview></code>
+    </div>
+</fieldset>
