@@ -18,13 +18,18 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
 
     private readonly IAuthorizationService _authorizationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IPirschClientSideTrackingViewModelService _pirschClientSideTrackingViewModelService;
 
     protected override string SettingsGroupId => GroupId;
 
-    public PirschSettingsDriver(IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+    public PirschSettingsDriver(
+        IAuthorizationService authorizationService,
+        IHttpContextAccessor httpContextAccessor,
+        IPirschClientSideTrackingViewModelService pirschClientSideTrackingViewModelService)
     {
         _authorizationService = authorizationService;
         _httpContextAccessor = httpContextAccessor;
+        _pirschClientSideTrackingViewModelService = pirschClientSideTrackingViewModelService;
     }
 
     public override async Task<IDisplayResult> EditAsync(ISite model, PirschSettings section, BuildEditorContext context)
@@ -64,6 +69,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
             }
 
             section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
+            await _pirschClientSideTrackingViewModelService.InvalidateCachedViewModelAsync();
         }
 
         return await EditAsync(model, section, context);

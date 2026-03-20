@@ -11,7 +11,6 @@ using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Navigation;
 using OrchardCore.Security.Permissions;
-using OrchardCore.Settings;
 
 namespace Lombiq.Marketing;
 
@@ -26,6 +25,7 @@ public sealed class Startup : StartupBase
     {
         services.Configure<PirschSettings>(_shellConfiguration.GetSection("Lombiq_Marketing"));
         services.AddTransient<IConfigureOptions<PirschSettings>, PirschSettingsConfiguration>();
+        services.AddScoped<IPirschClientSideTrackingViewModelService, PirschClientSideTrackingViewModelService>();
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
         services.AddPermissionProvider<PirschSettingsPermissions>();
         services.AddNavigationProvider<PirschSettingsAdminMenu>();

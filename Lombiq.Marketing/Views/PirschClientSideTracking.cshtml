@@ -1,0 +1,13 @@
+@using Lombiq.Marketing.Services
+@inject IPirschClientSideTrackingViewModelService PirschClientSideTrackingViewModelService
+
+@{
+    var viewModel = await PirschClientSideTrackingViewModelService.GetViewModelAsync();
+
+    if (string.IsNullOrWhiteSpace(viewModel.ClientSideCodeSnippet))
+    {
+        return;
+    }
+}
+
+@Html.Raw(viewModel.ClientSideCodeSnippet)
