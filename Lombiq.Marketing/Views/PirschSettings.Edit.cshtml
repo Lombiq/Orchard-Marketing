@@ -2,6 +2,16 @@
 @{
     var placeholder = Model.HasClientSecret ? T["A client secret is already configured."].Value : string.Empty;
 }
+
+<fieldset class="mb-3" asp-validation-class-for="ClientSideCodeSnippet">
+    <label class="form-label" asp-for="ClientSideCodeSnippet">@T["Client-side Code Snippet"]</label>
+    <textarea asp-for="ClientSideCodeSnippet" class="form-control font-monospace" rows="14" spellcheck="false"></textarea>
+    <span asp-validation-for="ClientSideCodeSnippet"></span>
+    <span class="hint">
+        @T["Paste the script snippet from your Pirsch dashboard. On save only the supported script tag and attributes are kept, and the src is rewritten to the proxy URL."]
+    </span>
+</fieldset>
+
 <fieldset class="mb-3" asp-validation-class-for="ClientSecret">
     <label class="form-label" asp-for="ClientSecret">@T["Client Secret"]</label>
 
@@ -18,13 +28,4 @@
             <label asp-for="ClearClientSecret" class="form-check-label">@T["Clear stored secret"]</label>
         </div>
     }
-</fieldset>
-
-<fieldset class="mb-3" asp-validation-class-for="ClientSideCodeSnippet">
-    <label class="form-label" asp-for="ClientSideCodeSnippet">@T["Client-side Code Snippet"]</label>
-    <textarea asp-for="ClientSideCodeSnippet" class="form-control font-monospace" rows="14" spellcheck="false"></textarea>
-    <span asp-validation-for="ClientSideCodeSnippet"></span>
-    <span class="hint">
-        @T["Paste the script snippet from your Pirsch dashboard. On save only the supported script tag and attributes are kept, and the src is rewritten to the proxy URL."]
-    </span>
 </fieldset>
