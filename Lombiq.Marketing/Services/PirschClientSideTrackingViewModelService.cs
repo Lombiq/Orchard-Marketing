@@ -39,17 +39,29 @@ public sealed class PirschClientSideTrackingViewModelService : IPirschClientSide
             return viewModel;
         }
 
-        var snippetHtml = _pirschSettingsOptions.Value.ClientSideCodeSnippet;
+        var settings = _pirschSettingsOptions.Value;
+        var snippetHtml = settings.ClientSideCodeSnippet;
         var renderedSnippet = snippetHtml;
 
         if (_environment.IsDevelopment() && !string.IsNullOrWhiteSpace(snippetHtml))
         {
             var parser = new HtmlParser();
             var script = (await parser.ParseDocumentAsync(snippetHtml)).Scripts.FirstOrDefault();
-            if (script != null && !script.HasAttribute("data-dev"))
+
+            if (script != null)
             {
-                script.SetAttribute("data-dev", string.Empty);
-                renderedSnippet = script.OuterHtml;
+                var fallbackDataDev = settings.DataDev;
+
+                if (!string.IsNullOrEmpty(script.GetAttribute("data-dev")))
+                {
+                    renderedSnippet = PirschSettingsSanitizer.SerializeScript(script);
+                }
+                else if (string.IsNullOrEmpty(script.GetAttribute("data-dev")) &&
+                    !string.IsNullOrWhiteSpace(fallbackDataDev))
+                {
+                    script.SetAttribute("data-dev", fallbackDataDev);
+                    renderedSnippet = PirschSettingsSanitizer.SerializeScript(script);
+                }
             }
         }
 

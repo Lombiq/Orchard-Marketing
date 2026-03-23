@@ -67,6 +67,11 @@ public static class PirschSettingsSanitizer
 
         script.TextContent = string.Empty;
 
+        return SerializeScript(script);
+    }
+
+    public static string SerializeScript(IElement script)
+    {
         using var stringWriter = new StringWriter();
         script.ToHtml(stringWriter, _formatter);
 

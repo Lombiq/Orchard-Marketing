@@ -23,7 +23,7 @@ public sealed class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<PirschSettings>(_shellConfiguration.GetSection("Lombiq_Marketing"));
+        services.Configure<PirschSettings>(_shellConfiguration.GetSection("Lombiq_Marketing:Pirsch"));
         services.AddTransient<IConfigureOptions<PirschSettings>, PirschSettingsConfiguration>();
         services.AddScoped<IPirschClientSideTrackingViewModelService, PirschClientSideTrackingViewModelService>();
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
