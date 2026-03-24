@@ -15,6 +15,8 @@ using OrchardCore.Modules;
 using OrchardCore.Navigation;
 using OrchardCore.Security.Permissions;
 using System;
+using System.Net;
+using System.Net.Http;
 
 namespace Lombiq.Marketing.Pirsch;
 
@@ -28,7 +30,12 @@ public sealed class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Configure<PirschSettings>(_shellConfiguration.GetSection("Lombiq_Marketing:Pirsch"));
-        services.AddHttpClient(nameof(PirschProxyMiddleware));
+        services.AddHttpClient(nameof(PirschProxyMiddleware))
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                // Pirsch uses compression.
+                AutomaticDecompression = DecompressionMethods.All,
+            });
         services.AddTransient<IConfigureOptions<PirschSettings>, PirschSettingsConfiguration>();
         services.AddScoped<IPirschClientSideTrackingViewModelService, PirschClientSideTrackingViewModelService>();
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
