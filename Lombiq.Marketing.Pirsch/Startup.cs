@@ -43,6 +43,9 @@ public sealed class Startup : StartupBase
         services.AddNavigationProvider<PirschSettingsAdminMenu>();
     }
 
-    public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider) =>
+    public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
+    {
+        app.UseMiddleware<PirschClientHintsMiddleware>();
         app.UseMiddleware<PirschProxyMiddleware>();
+    }
 }
