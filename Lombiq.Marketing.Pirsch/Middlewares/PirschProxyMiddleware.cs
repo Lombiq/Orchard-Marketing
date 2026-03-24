@@ -26,13 +26,24 @@ public sealed class PirschProxyMiddleware
 
     public async Task InvokeAsync(HttpContext context, IHttpClientFactory httpClientFactory)
     {
-        if (context.Request.Path != PirschProxyConstants.ProxyScriptPath || !HttpMethods.IsGet(context.Request.Method))
+        if (!HttpMethods.IsGet(context.Request.Method) ||
+            !context.Request.Path.StartsWithSegments(PirschProxyConstants.ProxyPathPrefix, out var remainingPath))
         {
             await _next(context);
             return;
         }
 
-        if (_memoryCache.TryGetValue(CacheKey, out CachedPirschScript? cachedScript) && cachedScript != null)
+        var targetUri = CreatePirschUri(remainingPath, context.Request.QueryString);
+        if (targetUri == null)
+        {
+            await _next(context);
+            return;
+        }
+
+        var isScriptRequest = context.Request.Path == PirschProxyConstants.ProxyScriptPath;
+        if (isScriptRequest &&
+            _memoryCache.TryGetValue(CacheKey, out CachedPirschScript? cachedScript) &&
+            cachedScript != null)
         {
             context.Response.StatusCode = StatusCodes.Status200OK;
             context.Response.ContentType = cachedScript.ContentType;
@@ -40,9 +51,7 @@ public sealed class PirschProxyMiddleware
             return;
         }
 
-        using var requestMessage = new HttpRequestMessage(
-            new HttpMethod(context.Request.Method),
-            PirschProxyConstants.PirschScriptUrl);
+        using var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.Method), targetUri);
 
         try
         {
@@ -53,22 +62,43 @@ public sealed class PirschProxyMiddleware
             responseMessage.EnsureSuccessStatusCode();
 
             context.Response.StatusCode = (int)responseMessage.StatusCode;
+            context.Response.ContentType = responseMessage.Content.Headers.ContentType?.ToString();
 
-            var content = await responseMessage.Content.ReadAsStringAsync(context.RequestAborted);
+            if (isScriptRequest)
+            {
+                var content = await responseMessage.Content.ReadAsStringAsync(context.RequestAborted);
 
-            cachedScript = new CachedPirschScript(
-                content,
-                responseMessage.Content.Headers.ContentType?.ToString() ?? "application/javascript");
+                cachedScript = new CachedPirschScript(
+                    content,
+                    responseMessage.Content.Headers.ContentType?.ToString() ?? "application/javascript");
 
-            _memoryCache.Set(CacheKey, cachedScript, _cacheDuration);
+                _memoryCache.Set(CacheKey, cachedScript, _cacheDuration);
 
-            context.Response.ContentType = cachedScript.ContentType;
-            await context.Response.WriteAsync(cachedScript.Content, context.RequestAborted);
+                context.Response.ContentType = cachedScript.ContentType;
+                await context.Response.WriteAsync(cachedScript.Content, context.RequestAborted);
+                return;
+            }
+
+            await responseMessage.Content.CopyToAsync(context.Response.Body, context.RequestAborted);
         }
         catch (HttpRequestException exception)
         {
-            _logger.LogWarning(exception, "Failed to proxy the Pirsch script for path {RequestPath}", context.Request.Path);
+            _logger.LogWarning(exception, "Failed to proxy the Pirsch request for path {RequestPath}", context.Request.Path);
         }
+    }
+
+    private static Uri? CreatePirschUri(PathString remainingPath, QueryString queryString)
+    {
+        var upstreamPath = remainingPath.Value switch
+        {
+            "/sauce.js" => PirschProxyConstants.PirschScriptPath,
+            { } path => path,
+            null => null,
+        };
+
+        return upstreamPath == null
+            ? null
+            : new Uri(PirschProxyConstants.PirschBaseUrl + upstreamPath + queryString.Value);
     }
 
     private sealed record CachedPirschScript(string Content, string ContentType);
