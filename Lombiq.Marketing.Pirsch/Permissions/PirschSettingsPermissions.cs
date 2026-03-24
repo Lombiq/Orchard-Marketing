@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Permissions;
+namespace Lombiq.Marketing.Pirsch.Permissions;
 
 public sealed class PirschSettingsPermissions : IPermissionProvider
 {

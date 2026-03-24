@@ -1,4 +1,4 @@
-namespace Lombiq.Marketing.Constants;
+namespace Lombiq.Marketing.Pirsch.Constants;
 
 public static class PirschProxyConstants
 {

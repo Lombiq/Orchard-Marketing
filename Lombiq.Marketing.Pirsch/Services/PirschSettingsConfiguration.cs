@@ -1,9 +1,8 @@
-using Lombiq.Marketing.Models;
+using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.Extensions.Options;
 using OrchardCore.Settings;
-using System;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.Pirsch.Services;
 
 public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettings>
 {

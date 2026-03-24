@@ -1,7 +1,7 @@
+using Lombiq.Marketing.Pirsch.ViewModels;
 using System.Threading.Tasks;
-using Lombiq.Marketing.ViewModels;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.Pirsch.Services;
 
 public interface IPirschClientSideTrackingViewModelService
 {

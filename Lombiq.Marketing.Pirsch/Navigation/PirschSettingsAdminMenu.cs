@@ -1,11 +1,11 @@
-using Lombiq.Marketing.Drivers;
-using Lombiq.Marketing.Permissions;
+using Lombiq.Marketing.Pirsch.Drivers;
+using Lombiq.Marketing.Pirsch.Permissions;
 using Microsoft.Extensions.Localization;
 using OrchardCore.Navigation;
 using System;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Navigation;
+namespace Lombiq.Marketing.Pirsch.Navigation;
 
 public sealed class PirschSettingsAdminMenu : INavigationProvider
 {

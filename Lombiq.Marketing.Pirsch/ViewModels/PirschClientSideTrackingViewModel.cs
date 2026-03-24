@@ -1,4 +1,4 @@
-namespace Lombiq.Marketing.ViewModels;
+namespace Lombiq.Marketing.Pirsch.ViewModels;
 
 public class PirschClientSideTrackingViewModel
 {

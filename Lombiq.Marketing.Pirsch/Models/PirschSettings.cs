@@ -1,4 +1,4 @@
-namespace Lombiq.Marketing.Models;
+namespace Lombiq.Marketing.Pirsch.Models;
 
 public sealed class PirschSettings
 {

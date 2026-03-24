@@ -1,7 +1,7 @@
-using Lombiq.Marketing.Models;
-using Lombiq.Marketing.Permissions;
-using Lombiq.Marketing.Services;
-using Lombiq.Marketing.ViewModels;
+using Lombiq.Marketing.Pirsch.Models;
+using Lombiq.Marketing.Pirsch.Permissions;
+using Lombiq.Marketing.Pirsch.Services;
+using Lombiq.Marketing.Pirsch.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using OrchardCore.DisplayManagement.Entities;
@@ -10,7 +10,7 @@ using OrchardCore.DisplayManagement.Views;
 using OrchardCore.Settings;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Drivers;
+namespace Lombiq.Marketing.Pirsch.Drivers;
 
 public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
 {

@@ -1,6 +1,6 @@
 using AngleSharp.Html.Parser;
-using Lombiq.Marketing.Models;
-using Lombiq.Marketing.ViewModels;
+using Lombiq.Marketing.Pirsch.Models;
+using Lombiq.Marketing.Pirsch.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -8,7 +8,7 @@ using OrchardCore.Environment.Cache;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.Pirsch.Services;
 
 public sealed class PirschClientSideTrackingViewModelService : IPirschClientSideTrackingViewModelService
 {

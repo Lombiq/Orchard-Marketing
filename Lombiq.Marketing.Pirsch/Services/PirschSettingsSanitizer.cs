@@ -1,13 +1,13 @@
 using AngleSharp.Dom;
 using AngleSharp.Html;
 using AngleSharp.Html.Parser;
-using Lombiq.Marketing.Constants;
+using Lombiq.Marketing.Pirsch.Constants;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.Pirsch.Services;
 
 public static class PirschSettingsSanitizer
 {

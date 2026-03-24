@@ -1,4 +1,4 @@
-using Lombiq.Marketing.Constants;
+using Lombiq.Marketing.Pirsch.Constants;
 using OrchardCore.Modules.Manifest;
 
 [assembly: Module(
