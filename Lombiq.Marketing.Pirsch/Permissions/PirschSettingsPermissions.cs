@@ -24,5 +24,10 @@ public sealed class PirschSettingsPermissions : IPermissionProvider
             Name = "Administrator",
             Permissions = [ManagePirschSettings],
         },
+        new()
+        {
+            Name = "Editor",
+            Permissions = [ManagePirschSettings],
+        },
     ];
 }
