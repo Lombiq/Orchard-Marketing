@@ -30,6 +30,7 @@ public sealed class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Configure<PirschSettings>(_shellConfiguration.GetSection("Lombiq_Marketing:Pirsch"));
+        services.AddHttpClient<IPirschApiClient, PirschApiClient>(client => client.BaseAddress = new Uri(PirschApiConstants.BaseUrl));
         services.AddHttpClient(nameof(PirschProxyMiddleware))
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
