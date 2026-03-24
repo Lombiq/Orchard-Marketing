@@ -44,6 +44,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
                 viewModel.HasClientSecret = !string.IsNullOrWhiteSpace(section.ClientSecret);
                 viewModel.ClearClientSecret = false;
                 viewModel.ClientSideCodeSnippet = section.ClientSideCodeSnippet;
+                viewModel.DataDev = section.DataDev;
             })
             .Location("Content:1")
             .OnGroup(GroupId);
@@ -69,6 +70,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
             }
 
             section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
+            section.DataDev = viewModel.DataDev ?? string.Empty;
             await _pirschClientSideTrackingViewModelService.InvalidateCachedViewModelAsync();
         }
 

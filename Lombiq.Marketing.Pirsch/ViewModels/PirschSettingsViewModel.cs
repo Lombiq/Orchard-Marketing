@@ -9,4 +9,6 @@ public class PirschSettingsViewModel
     public bool ClearClientSecret { get; set; }
 
     public string? ClientSideCodeSnippet { get; set; }
+
+    public string? DataDev { get; set; }
 }

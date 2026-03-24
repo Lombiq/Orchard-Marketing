@@ -12,6 +12,15 @@
     </span>
 </fieldset>
 
+<fieldset class="mb-3" asp-validation-class-for="DataDev">
+    <label class="form-label" asp-for="DataDev">@T["Data Dev"]</label>
+    <input asp-for="DataDev" class="form-control" />
+    <span asp-validation-for="DataDev"></span>
+    <span class="hint">
+        @T["Override for the data dev attribute in the client script."]
+    </span>
+</fieldset>
+
 <fieldset class="mb-3" asp-validation-class-for="ClientSecret">
     <label class="form-label" asp-for="ClientSecret">@T["Client Secret"]</label>
 

@@ -14,14 +14,19 @@ public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettin
     {
         var settings = _siteService.GetSettingsAsync<PirschSettings>().GetAwaiter().GetResult();
 
-        if (string.IsNullOrWhiteSpace(options.ClientSecret))
+        if (!string.IsNullOrWhiteSpace(settings.ClientSecret))
         {
             options.ClientSecret = settings.ClientSecret;
         }
 
-        if (string.IsNullOrWhiteSpace(options.ClientSideCodeSnippet))
+        if (!string.IsNullOrWhiteSpace(settings.ClientSideCodeSnippet))
         {
             options.ClientSideCodeSnippet = settings.ClientSideCodeSnippet;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settings.DataDev))
+        {
+            options.DataDev = settings.DataDev;
         }
     }
 }
