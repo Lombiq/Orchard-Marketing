@@ -21,7 +21,7 @@ public sealed class PirschProxyMiddleware
 
     public async Task InvokeAsync(HttpContext context, IHttpClientFactory httpClientFactory)
     {
-        if (context.Request.Path != PirschProxyConstants.ProxyScriptPath && !HttpMethods.IsGet(context.Request.Method))
+        if (context.Request.Path != PirschProxyConstants.ProxyScriptPath || !HttpMethods.IsGet(context.Request.Method))
         {
             await _next(context);
             return;
