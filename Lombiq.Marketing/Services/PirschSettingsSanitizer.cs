@@ -1,6 +1,7 @@
 using AngleSharp.Dom;
 using AngleSharp.Html;
 using AngleSharp.Html.Parser;
+using Lombiq.Marketing.Constants;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,6 @@ namespace Lombiq.Marketing.Services;
 
 public static class PirschSettingsSanitizer
 {
-    private const string ProxyScriptSource = "/secret-sauce/sauce.js";
     private static readonly PirschScriptMarkupFormatter _formatter = new();
 
     private static readonly HashSet<string> _allowedAttributeNames = new(StringComparer.OrdinalIgnoreCase)
@@ -60,9 +60,9 @@ public static class PirschSettingsSanitizer
 
         foreach (var attributeName in removeAttributes) script.RemoveAttribute(attributeName);
 
-        if (!string.Equals(script.GetAttribute("src"), ProxyScriptSource, StringComparison.OrdinalIgnoreCase))
+        if (!script.GetAttribute("src").EqualsOrdinalIgnoreCase(PirschProxyConstants.ProxyScriptPath))
         {
-            script.SetAttribute("src", ProxyScriptSource);
+            script.SetAttribute("src", PirschProxyConstants.ProxyScriptPath);
         }
 
         script.TextContent = string.Empty;
@@ -85,7 +85,7 @@ public static class PirschSettingsSanitizer
 
         public override string OpenTag(IElement element, bool selfClosing)
         {
-            if (!element.LocalName.Equals("script", StringComparison.OrdinalIgnoreCase))
+            if (!element.LocalName.EqualsOrdinalIgnoreCase("script"))
             {
                 return base.OpenTag(element, selfClosing);
             }

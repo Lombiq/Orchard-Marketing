@@ -15,7 +15,7 @@ public sealed class PirschSettingsAdminMenu : INavigationProvider
 
     public ValueTask BuildNavigationAsync(string name, NavigationBuilder builder)
     {
-        if (!string.Equals(name, "admin", StringComparison.OrdinalIgnoreCase)) return ValueTask.CompletedTask;
+        if (!name.EqualsOrdinalIgnoreCase("admin")) return ValueTask.CompletedTask;
 
         builder.Add(T["Configuration"], configuration => configuration
             .Add(T["Settings"], settings => settings
@@ -27,3 +27,4 @@ public sealed class PirschSettingsAdminMenu : INavigationProvider
         return ValueTask.CompletedTask;
     }
 }
+
