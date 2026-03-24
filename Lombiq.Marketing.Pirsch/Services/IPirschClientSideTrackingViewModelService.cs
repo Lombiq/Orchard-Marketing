@@ -5,7 +5,7 @@ namespace Lombiq.Marketing.Pirsch.Services;
 
 public interface IPirschClientSideTrackingViewModelService
 {
-    Task<PirschClientSideTrackingViewModel> GetViewModelAsync();
+    Task<PirschClientSideTrackingViewModel?> GetViewModelAsync();
 
     Task InvalidateCachedViewModelAsync();
 }

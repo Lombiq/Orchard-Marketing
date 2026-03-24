@@ -2,11 +2,11 @@ namespace Lombiq.Marketing.Pirsch.ViewModels;
 
 public class PirschSettingsViewModel
 {
-    public string ClientSecret { get; set; } = string.Empty;
+    public string? ClientSecret { get; set; }
 
     public bool HasClientSecret { get; set; }
 
     public bool ClearClientSecret { get; set; }
 
-    public string ClientSideCodeSnippet { get; set; } = string.Empty;
+    public string? ClientSideCodeSnippet { get; set; }
 }

@@ -32,9 +32,9 @@ public sealed class PirschClientSideTrackingViewModelService : IPirschClientSide
         _signal = signal;
     }
 
-    public async Task<PirschClientSideTrackingViewModel> GetViewModelAsync()
+    public async Task<PirschClientSideTrackingViewModel?> GetViewModelAsync()
     {
-        if (_memoryCache.TryGetValue(CacheKey, out PirschClientSideTrackingViewModel viewModel))
+        if (_memoryCache.TryGetValue(CacheKey, out PirschClientSideTrackingViewModel? viewModel))
         {
             return viewModel;
         }
@@ -67,7 +67,7 @@ public sealed class PirschClientSideTrackingViewModelService : IPirschClientSide
 
         viewModel = new PirschClientSideTrackingViewModel
         {
-            ClientSideCodeSnippet = renderedSnippet ?? string.Empty,
+            ClientSideCodeSnippet = renderedSnippet,
         };
 
         _memoryCache.Set(CacheKey, viewModel, _signal.GetToken(MemoryCacheKeyPrefix));

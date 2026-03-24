@@ -42,7 +42,7 @@ public static class PirschSettingsSanitizer
         "data-domain",
     };
 
-    public static string SanitizeClientSideCodeSnippet(string snippetHtml)
+    public static string SanitizeClientSideCodeSnippet(string? snippetHtml)
     {
         if (string.IsNullOrWhiteSpace(snippetHtml)) return string.Empty;
 
