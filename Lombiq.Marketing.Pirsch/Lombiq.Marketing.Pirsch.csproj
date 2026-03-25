@@ -34,9 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Lombiq.Hosting.Tenants\Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj" />
     <ProjectReference Include="..\Lombiq.Marketing.UrlShortener\Lombiq.Marketing.UrlShortener.csproj" />
   </ItemGroup>
 
 </Project>
-
-
