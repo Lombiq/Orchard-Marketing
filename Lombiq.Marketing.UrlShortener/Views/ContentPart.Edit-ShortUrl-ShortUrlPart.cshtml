@@ -1,7 +1,5 @@
 @using Lombiq.Marketing.UrlShortener.Constants
 
-<script asp-name="@ResourceNames.ShortUrlEditorPreview" at="Foot"></script>
-
 @foreach (var shape in Model)
 {
     @await DisplayAsync(shape)
@@ -14,3 +12,5 @@
         <code class="form-control-plaintext text-break mb-0 d-inline" data-short-url-preview></code>
     </div>
 </fieldset>
+
+<script asp-name="@ResourceNames.ShortUrlEditorPreview" at="Foot"></script>
