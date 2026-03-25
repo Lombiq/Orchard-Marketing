@@ -10,17 +10,13 @@ namespace Lombiq.Marketing.UrlShortener.Middlewares;
 public sealed class ShortUrlRedirectMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly IEnumerable<IShortUrlRedirectEventHandler> _redirectEventHandlers;
 
-    public ShortUrlRedirectMiddleware(
-        RequestDelegate next,
+    public ShortUrlRedirectMiddleware(RequestDelegate next) => _next = next;
+
+    public async Task InvokeAsync(
+        HttpContext context,
+        IUrlShorteningService urlShorteningService,
         IEnumerable<IShortUrlRedirectEventHandler> redirectEventHandlers)
-    {
-        _next = next;
-        _redirectEventHandlers = redirectEventHandlers;
-    }
-
-    public async Task InvokeAsync(HttpContext context, IUrlShorteningService urlShorteningService)
     {
         if (!HttpMethods.IsGet(context.Request.Method) && !HttpMethods.IsHead(context.Request.Method))
         {
@@ -49,7 +45,7 @@ public sealed class ShortUrlRedirectMiddleware
             DestinationUrl = destinationUrl,
         };
 
-        foreach (var redirectEventHandler in _redirectEventHandlers)
+        foreach (var redirectEventHandler in redirectEventHandlers)
         {
             await redirectEventHandler.RedirectingAsync(redirectContext);
         }
