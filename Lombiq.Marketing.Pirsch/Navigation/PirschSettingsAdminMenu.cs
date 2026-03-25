@@ -1,30 +1,25 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Navigation;
 using Lombiq.Marketing.Pirsch.Drivers;
 using Lombiq.Marketing.Pirsch.Permissions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using OrchardCore.Navigation;
-using System;
-using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Pirsch.Navigation;
 
-public sealed class PirschSettingsAdminMenu : INavigationProvider
+public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
 {
-    private readonly IStringLocalizer T;
-
-    public PirschSettingsAdminMenu(IStringLocalizer<PirschSettingsAdminMenu> stringLocalizer) => T = stringLocalizer;
-
-    public ValueTask BuildNavigationAsync(string name, NavigationBuilder builder)
+    public PirschSettingsAdminMenu(IHttpContextAccessor hca, IStringLocalizer stringLocalizer)
+        : base(hca, stringLocalizer)
     {
-        if (!name.EqualsOrdinalIgnoreCase("admin")) return ValueTask.CompletedTask;
+    }
 
+    protected override void Build(NavigationBuilder builder) =>
         builder.Add(T["Configuration"], configuration => configuration
             .Add(T["Settings"], settings => settings
-                .Add(T["Pirsch"], T["Pirsch"], pirsch => pirsch
-                    .Action("Index", "Admin", new { area = "OrchardCore.Settings", groupId = PirschSettingsDriver.GroupId })
-                    .Permission(PirschSettingsPermissions.ManagePirschSettings)
-                    .LocalNav())));
-
-        return ValueTask.CompletedTask;
-    }
+                .Add(T["Marketing"], marketing => marketing
+                    .Add(T["Pirsch"], T["Pirsch"], pirsch => pirsch
+                        .Action("Index", "Admin", new { area = "OrchardCore.Settings", groupId = PirschSettingsDriver.GroupId })
+                        .Permission(PirschSettingsPermissions.ManagePirschSettings)
+                        .LocalNav()))));
 }
-
