@@ -1,5 +1,6 @@
 using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net.Http;
@@ -21,29 +22,49 @@ public sealed class PirschApiClient : IPirschApiClient
 
     private readonly HttpClient _httpClient;
     private readonly IOptionsSnapshot<PirschSettings> _pirschSettingsOptions;
+    private readonly ILogger<PirschApiClient> _logger;
 
-    public PirschApiClient(HttpClient httpClient, IOptionsSnapshot<PirschSettings> pirschSettingsOptions)
+    public PirschApiClient(
+        HttpClient httpClient,
+        IOptionsSnapshot<PirschSettings> pirschSettingsOptions,
+        ILogger<PirschApiClient> logger)
     {
         _httpClient = httpClient;
         _pirschSettingsOptions = pirschSettingsOptions;
+        _logger = logger;
     }
 
-    public Task SendHitAsync(PirschHitRequest request, CancellationToken cancellationToken = default) =>
+    public Task<bool> SendHitAsync(PirschHitRequest request, CancellationToken cancellationToken = default) =>
         SendAsync(PirschApiConstants.HitEndpointPath, request, cancellationToken);
 
-    private async Task SendAsync<TRequest>(string requestUri, TRequest request, CancellationToken cancellationToken)
+    private async Task<bool> SendAsync<TRequest>(string requestUri, TRequest request, CancellationToken cancellationToken)
     {
         var accessKey = _pirschSettingsOptions.Value.ClientSecret;
         if (string.IsNullOrWhiteSpace(accessKey))
         {
-            throw new InvalidOperationException("Pirsch access key is not configured.");
+            _logger.LogError("Cannot send a request to Pirsch API because the client secret is not configured");
+            return false;
         }
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
         requestMessage.Content = JsonContent.Create(request, options: _jsonSerializerOptions);
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessKey);
 
-        using var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        responseMessage.EnsureSuccessStatusCode();
+        try
+        {
+            using var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
+            responseMessage.EnsureSuccessStatusCode();
+
+            _logger.LogInformation(
+                "Successfully sent a request to Pirsch API. Request URI: {RequestUri}",
+                requestUri);
+        }
+        catch (HttpRequestException httpRequestException)
+        {
+            _logger.LogError(httpRequestException, "There was a problem sending the request to the Pirsch API");
+            return false;
+        }
+
+        return true;
     }
 }
