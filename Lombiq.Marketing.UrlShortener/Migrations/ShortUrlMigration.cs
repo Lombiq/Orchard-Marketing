@@ -1,12 +1,19 @@
 using Lombiq.Marketing.UrlShortener.Constants;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.BackgroundJobs;
 using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentFields.Settings;
 using OrchardCore.ContentManagement.Metadata;
 using OrchardCore.ContentManagement.Metadata.Settings;
+using OrchardCore.Contents;
 using OrchardCore.Data.Migration;
+using OrchardCore.Environment.Shell.Scope;
+using OrchardCore.Security;
 using OrchardCore.Title.Models;
+using System.Linq;
 using System.Threading.Tasks;
 using YesSql.Sql;
 
@@ -96,6 +103,31 @@ public sealed class ShortUrlMigration : DataMigration
         await SchemaBuilder.AlterIndexTableAsync<ShortUrlPartIndex>(table => table
             .CreateIndex($"IDX_{nameof(ShortUrlPartIndex)}_{nameof(ShortUrlPartIndex.ShortUrl)}", nameof(ShortUrlPartIndex.ShortUrl))
         );
+
+        // Simply in the deferred task it still won't find the editor role on setup, because it's not initiated yet.
+        // So we execute the task after the end of the request, which is after the setup is completed, so the editor
+        // role will be there.
+        ShellScope.AddDeferredTask(_ => HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(
+            "RemoveDeletePermission",
+            async subScope =>
+            {
+                var roleManager = subScope.ServiceProvider.GetRequiredService<RoleManager<IRole>>();
+
+                var editorRole = await roleManager.FindByNameAsync("Editor");
+                var deleteContentClaim = ((Role)editorRole)?
+                    .RoleClaims
+                    .Where(claim => claim.ClaimValue == CommonPermissions.DeleteContent.Name)
+                    .ToArray();
+
+                if (deleteContentClaim == null) return;
+
+                foreach (var claim in deleteContentClaim)
+                {
+                    await roleManager.RemoveClaimAsync(editorRole, claim);
+                }
+
+                await roleManager.UpdateAsync(editorRole);
+            }));
 
         return 1;
     }
