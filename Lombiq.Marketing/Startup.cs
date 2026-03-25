@@ -11,7 +11,7 @@ public sealed class Startup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.AddScoped<IClientSideTrackingViewModelService, ClientSideTrackingViewModelService>();
+        services.AddScoped<IClientSideTrackingMarkupService, ClientSideTrackingMarkupService>();
         services.AddScoped<IShortUrlRedirectEventHandler, MarketingShortUrlRedirectEventHandler>();
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Services;
 
-public sealed class ClientSideTrackingViewModelService : IClientSideTrackingViewModelService
+public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupService
 {
     private const string MemoryCacheKeyPrefix = "Lombiq.Marketing.ClientSideTracking";
     private const string CacheKey = $"{MemoryCacheKeyPrefix}:{nameof(ClientSideTrackingViewModel)}";
@@ -17,7 +17,7 @@ public sealed class ClientSideTrackingViewModelService : IClientSideTrackingView
     private readonly IEnumerable<IClientSideTrackingProvider> _providers;
     private readonly ISignal _signal;
 
-    public ClientSideTrackingViewModelService(
+    public ClientSideTrackingMarkupService(
         IMemoryCache memoryCache,
         IEnumerable<IClientSideTrackingProvider> providers,
         ISignal signal)

@@ -25,8 +25,8 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
     public PirschSettingsDriver(
         IAuthorizationService authorizationService,
         IHttpContextAccessor httpContextAccessor,
-        IClientSideTrackingViewModelService clientSideTrackingViewModelService)
-        : base(clientSideTrackingViewModelService)
+        IClientSideTrackingMarkupService clientSideTrackingMarkupService)
+        : base(clientSideTrackingMarkupService)
     {
         _authorizationService = authorizationService;
         _httpContextAccessor = httpContextAccessor;

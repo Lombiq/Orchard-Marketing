@@ -6,7 +6,7 @@ namespace Lombiq.Marketing.Services;
 /// <summary>
 /// Builds and caches the client-side tracking markup rendered by the marketing module.
 /// </summary>
-public interface IClientSideTrackingViewModelService
+public interface IClientSideTrackingMarkupService
 {
     /// <summary>
     /// Gets the client-side tracking view model.

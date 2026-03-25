@@ -1,8 +1,8 @@
 @using Lombiq.Marketing.Services
-@inject IClientSideTrackingViewModelService ClientSideTrackingViewModelService
+@inject IClientSideTrackingMarkupService ClientSideTrackingMarkupService
 
 @{
-    var viewModel = await ClientSideTrackingViewModelService.GetViewModelAsync();
+    var viewModel = await ClientSideTrackingMarkupService.GetViewModelAsync();
 
     if (string.IsNullOrWhiteSpace(viewModel?.Html))
     {

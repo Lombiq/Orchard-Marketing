@@ -10,10 +10,10 @@ namespace Lombiq.Marketing.Drivers;
 public abstract class ClientSideTrackingSiteDisplayDriver<TSettings> : SiteDisplayDriver<TSettings>
     where TSettings : new()
 {
-    private readonly IClientSideTrackingViewModelService _clientSideTrackingViewModelService;
+    private readonly IClientSideTrackingMarkupService _clientSideTrackingMarkupService;
 
-    protected ClientSideTrackingSiteDisplayDriver(IClientSideTrackingViewModelService clientSideTrackingViewModelService) =>
-        _clientSideTrackingViewModelService = clientSideTrackingViewModelService;
+    protected ClientSideTrackingSiteDisplayDriver(IClientSideTrackingMarkupService clientSideTrackingMarkupService) =>
+        _clientSideTrackingMarkupService = clientSideTrackingMarkupService;
 
     public sealed override Task<IDisplayResult?> EditAsync(ISite model, TSettings section, BuildEditorContext context) =>
         EditDriverAsync(model, section, context);
@@ -23,7 +23,7 @@ public abstract class ClientSideTrackingSiteDisplayDriver<TSettings> : SiteDispl
         if (context.GroupId == SettingsGroupId)
         {
             await UpdateDriverAsync(model, section, context);
-            await _clientSideTrackingViewModelService.InvalidateCachedViewModelAsync();
+            await _clientSideTrackingMarkupService.InvalidateCachedViewModelAsync();
         }
 
         return await EditDriverAsync(model, section, context);
