@@ -30,7 +30,7 @@ public sealed class UrlShortenerAdminMenu : AdminMenuNavigationProviderBase
             contentTypeDefinition);
         builder
             .Add(T["Tools"], tools => tools
-                .Add(T["Short URLs"], T["Short URLs"].PrefixPosition(), testing => testing
+                .Add(T["Short URLs"], T["Short URLs"].PrefixPosition(), shortUrls => shortUrls
                     .AddClass("shorturls")
                     .Id("shorturls")
                     .Action(

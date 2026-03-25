@@ -9,7 +9,7 @@ namespace Lombiq.Marketing.Pirsch.Navigation;
 
 public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
 {
-    public PirschSettingsAdminMenu(IHttpContextAccessor hca, IStringLocalizer stringLocalizer)
+    public PirschSettingsAdminMenu(IHttpContextAccessor hca, IStringLocalizer<PirschSettingsAdminMenu> stringLocalizer)
         : base(hca, stringLocalizer)
     {
     }
@@ -18,6 +18,8 @@ public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
         builder.Add(T["Configuration"], configuration => configuration
             .Add(T["Settings"], settings => settings
                 .Add(T["Marketing"], marketing => marketing
+                    .AddClass("menu-marketing")
+                    .Id("marketing")
                     .Add(T["Pirsch"], T["Pirsch"], pirsch => pirsch
                         .Action("Index", "Admin", new { area = "OrchardCore.Settings", groupId = PirschSettingsDriver.GroupId })
                         .Permission(PirschSettingsPermissions.ManagePirschSettings)
