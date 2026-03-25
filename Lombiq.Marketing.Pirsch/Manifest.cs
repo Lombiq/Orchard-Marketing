@@ -1,5 +1,6 @@
 using Lombiq.Marketing.Pirsch.Constants;
 using OrchardCore.Modules.Manifest;
+using MarketingFeatureIds = Lombiq.Marketing.Constants.FeatureIds;
 
 [assembly: Module(
     Name = "Lombiq Marketing - Pirsch",
@@ -16,6 +17,6 @@ using OrchardCore.Modules.Manifest;
     Description = "Integrate the basics of Pirsch into Orchard Core.",
     Dependencies =
     [
-        Lombiq.Marketing.UrlShortener.Constants.FeatureIds.Base,
+        MarketingFeatureIds.Base,
     ]
 )]
