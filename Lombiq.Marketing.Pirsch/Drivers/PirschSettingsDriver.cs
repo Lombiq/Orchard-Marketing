@@ -1,3 +1,4 @@
+using Lombiq.Marketing.Services;
 using Lombiq.Marketing.Pirsch.Models;
 using Lombiq.Marketing.Pirsch.Permissions;
 using Lombiq.Marketing.Pirsch.Services;
@@ -18,18 +19,18 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
 
     private readonly IAuthorizationService _authorizationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IPirschClientSideTrackingViewModelService _pirschClientSideTrackingViewModelService;
+    private readonly IClientSideTrackingViewModelService _clientSideTrackingViewModelService;
 
     protected override string SettingsGroupId => GroupId;
 
     public PirschSettingsDriver(
         IAuthorizationService authorizationService,
         IHttpContextAccessor httpContextAccessor,
-        IPirschClientSideTrackingViewModelService pirschClientSideTrackingViewModelService)
+        IClientSideTrackingViewModelService clientSideTrackingViewModelService)
     {
         _authorizationService = authorizationService;
         _httpContextAccessor = httpContextAccessor;
-        _pirschClientSideTrackingViewModelService = pirschClientSideTrackingViewModelService;
+        _clientSideTrackingViewModelService = clientSideTrackingViewModelService;
     }
 
     public override async Task<IDisplayResult?> EditAsync(ISite model, PirschSettings section, BuildEditorContext context)
@@ -71,7 +72,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
 
             section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
             section.DataDev = viewModel.DataDev ?? string.Empty;
-            await _pirschClientSideTrackingViewModelService.InvalidateCachedViewModelAsync();
+            await _clientSideTrackingViewModelService.InvalidateCachedViewModelAsync();
         }
 
         return await EditAsync(model, section, context);
