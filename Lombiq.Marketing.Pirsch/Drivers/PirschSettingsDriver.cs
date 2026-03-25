@@ -32,7 +32,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
         _pirschClientSideTrackingViewModelService = pirschClientSideTrackingViewModelService;
     }
 
-    public override async Task<IDisplayResult> EditAsync(ISite model, PirschSettings section, BuildEditorContext context)
+    public override async Task<IDisplayResult?> EditAsync(ISite model, PirschSettings section, BuildEditorContext context)
     {
         if (!await IsAuthorizedToManagePirschSettingsAsync()) return null;
 
@@ -50,7 +50,7 @@ public sealed class PirschSettingsDriver : SiteDisplayDriver<PirschSettings>
             .OnGroup(GroupId);
     }
 
-    public override async Task<IDisplayResult> UpdateAsync(ISite model, PirschSettings section, UpdateEditorContext context)
+    public override async Task<IDisplayResult?> UpdateAsync(ISite model, PirschSettings section, UpdateEditorContext context)
     {
         if (context.GroupId == GroupId)
         {

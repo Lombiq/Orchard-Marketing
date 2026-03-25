@@ -9,5 +9,5 @@ public sealed class PirschHitRequest : PirschRequestData
     public string? Url { get; set; }
 
     [JsonPropertyName("time")]
-    public DateTimeOffset? Time { get; set; }
+    public DateTime? Time { get; set; }
 }
