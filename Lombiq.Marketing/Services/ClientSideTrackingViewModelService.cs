@@ -43,7 +43,7 @@ public sealed class ClientSideTrackingViewModelService : IClientSideTrackingView
 
         viewModel = new ClientSideTrackingViewModel
         {
-            Html = string.Join(Environment.NewLine + Environment.NewLine, markups.Where(markup => !string.IsNullOrWhiteSpace(markup))),
+            Html = string.Join(Environment.NewLine, markups.Where(markup => !string.IsNullOrWhiteSpace(markup))),
         };
 
         _memoryCache.Set(CacheKey, viewModel, _signal.GetToken(MemoryCacheKeyPrefix));
