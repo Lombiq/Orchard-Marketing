@@ -8,19 +8,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Lombiq Pirsch integration for Orchard Core</Title>
+    <Title>Lombiq Marketing - Pirsch for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2026, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq Pirsch integration for Orchard Core: Add client side and server side tracking.</Description>
+    <Description>Lombiq Marketing - Pirsch for Orchard Core: Pirsch analytics integration with client-side tracking, first-party proxying, and server-side hit reporting.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;URLShortener</PackageTags>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;Analytics;Tracking;Pirsch</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/src/Modules/Lombiq.Marketing/Lombiq.Marketing.Pirsch/Readme.md</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Readme.md" Link="Readme.md" />
+    <None Include="Readme.md" />
     <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 

@@ -11,16 +11,16 @@
     <Title>Lombiq Marketing for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2026, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq Marketing for Orchard Core: </Description>
+    <Description>Lombiq Marketing for Orchard Core: Shared marketing abstractions, short URL hit handling, and client-side tracking composition.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;URLShortener</PackageTags>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;Analytics;Tracking;UrlShortener</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/src/Modules/Lombiq.Marketing/Lombiq.Marketing/Readme.md</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Readme.md" Link="Readme.md" />
+    <None Include="Readme.md" />
     <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
