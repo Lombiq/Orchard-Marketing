@@ -5,6 +5,7 @@ using Lombiq.Marketing.Pirsch.Models;
 using Lombiq.Marketing.Pirsch.Navigation;
 using Lombiq.Marketing.Pirsch.Permissions;
 using Lombiq.Marketing.Pirsch.Services;
+using Lombiq.Marketing.UrlShortener.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,10 +18,12 @@ using OrchardCore.Security.Permissions;
 using System;
 using System.Net;
 using System.Net.Http;
+using UrlShortenerFeatureIds = Lombiq.Marketing.UrlShortener.Constants.FeatureIds;
 
 namespace Lombiq.Marketing.Pirsch;
 
 [Feature(FeatureIds.Base)]
+[RequireFeatures(UrlShortenerFeatureIds.Base)]
 public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -42,6 +45,8 @@ public sealed class Startup : StartupBase
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
         services.AddPermissionProvider<PirschSettingsPermissions>();
         services.AddNavigationProvider<PirschSettingsAdminMenu>();
+
+        services.AddScoped<IShortUrlRedirectEventHandler, PirschShortUrlRedirectEventHandler>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
