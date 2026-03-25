@@ -33,9 +33,14 @@
     <PackageReference Include="AngleSharp" Version="1.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
     <ProjectReference Include="..\..\Lombiq.Hosting.Tenants\Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj" />
     <ProjectReference Include="..\Lombiq.Marketing\Lombiq.Marketing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+    <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="9.0.0" />
+    <PackageReference Include="Lombiq.Marketing" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

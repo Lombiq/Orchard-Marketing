@@ -32,9 +32,12 @@
     <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Lombiq.Hosting.Tenants\Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj" />
+  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
     <ProjectReference Include="..\Lombiq.Marketing.UrlShortener\Lombiq.Marketing.UrlShortener.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+    <PackageReference Include="Lombiq.Marketing.UrlShortener" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
