@@ -16,5 +16,6 @@ using OrchardCore.Modules.Manifest;
     Description = "",
     Dependencies =
     [
+        Lombiq.Marketing.UrlShortener.Constants.FeatureIds.Base,
     ]
 )]
