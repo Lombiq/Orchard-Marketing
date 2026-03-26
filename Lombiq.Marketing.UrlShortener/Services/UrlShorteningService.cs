@@ -1,4 +1,4 @@
-﻿using Lombiq.Marketing.UrlShortener.Indexes;
+using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
 using Microsoft.Extensions.Caching.Memory;
 using OrchardCore.ContentManagement;
@@ -9,6 +9,8 @@ namespace Lombiq.Marketing.UrlShortener.Services;
 
 public class UrlShorteningService : IUrlShorteningService
 {
+    private const string ShortUrlCacheKeyPrefix = "ShortUrlRedirectInfo:";
+
     private readonly ISession _session;
     private readonly IMemoryCache _memoryCache;
 
@@ -18,27 +20,30 @@ public class UrlShorteningService : IUrlShorteningService
         _memoryCache = memoryCache;
     }
 
-    public async Task<string> GetDestinationUrlAsync(string shortUrl)
+    public async Task<ShortUrlRedirectInfo?> GetRedirectInfoAsync(string shortUrl)
     {
-        if (_memoryCache.TryGetValue(shortUrl, out string destinationUrl))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrl), out ShortUrlRedirectInfo redirectInfo))
         {
-            return destinationUrl;
+            return redirectInfo;
         }
 
-        destinationUrl = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl).FirstOrDefaultAsync())?.DestinationUrl;
-        if (!string.IsNullOrEmpty(destinationUrl))
+        ShortUrlRedirectInfo? cachedRedirectInfo = null;
+
+        if (await _session.Query<ContentItem, ShortUrlPartIndex>(index => index.ShortUrl == shortUrl)
+            .FirstOrDefaultAsync() is { } shortUrlContentItem)
         {
-            _memoryCache.Set(shortUrl, destinationUrl);
+            cachedRedirectInfo = CreateRedirectInfo(shortUrlContentItem);
+            _memoryCache.Set(GetCacheKey(shortUrl), cachedRedirectInfo);
         }
 
-        return destinationUrl;
+        return cachedRedirectInfo;
     }
 
     public async Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart)
     {
         // Check if the short URL already exists in the cache. This is a quick check to avoid hitting the database if
         // we already know the short URL is taken.
-        if (_memoryCache.TryGetValue(shortUrlPart.ShortUrl.Text, out _))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out ShortUrlRedirectInfo _))
         {
             return false;
         }
@@ -50,7 +55,7 @@ public class UrlShorteningService : IUrlShorteningService
             .FirstOrDefaultAsync() is { } existingShortUrl)
         {
             // Cache the existing short URL to prevent future database hits for the same short URL.
-            _memoryCache.Set(shortUrlPart.ShortUrl.Text, existingShortUrl.As<ShortUrlPart>().DestinationUrl);
+            _memoryCache.Set(GetCacheKey(shortUrlPart.ShortUrl.Text), CreateRedirectInfo(existingShortUrl));
             return false;
         }
 
@@ -60,16 +65,18 @@ public class UrlShorteningService : IUrlShorteningService
     public async Task<bool> UpdateShortUrlAsync(string previousShortUrl, ShortUrlPart shortUrlPart)
     {
         // If the short URL is being changed, we need to check if the new short URL is unique.
-        if (!await IsShortUrlUniqueAsync(shortUrlPart))
+        if (!string.IsNullOrEmpty(previousShortUrl) &&
+            shortUrlPart.ShortUrl.Text != previousShortUrl &&
+            !await IsShortUrlUniqueAsync(shortUrlPart))
         {
             return false;
         }
 
-        _memoryCache.Set(shortUrlPart.ShortUrl.Text, shortUrlPart.DestinationUrl.Text);
+        _memoryCache.Set(GetCacheKey(shortUrlPart.ShortUrl.Text), CreateRedirectInfo(shortUrlPart.ContentItem));
 
-        if (!string.IsNullOrEmpty(previousShortUrl))
+        if (!string.IsNullOrEmpty(previousShortUrl) && shortUrlPart.ShortUrl.Text != previousShortUrl)
         {
-            _memoryCache.Remove(previousShortUrl);
+            _memoryCache.Remove(GetCacheKey(previousShortUrl));
         }
 
         return true;
@@ -78,7 +85,26 @@ public class UrlShorteningService : IUrlShorteningService
     public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem)
     {
         // Remove the short URL from the cache to ensure it doesn't return stale data after deletion.
-        _memoryCache.Remove(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text);
+        _memoryCache.Remove(GetCacheKey(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text));
         return Task.CompletedTask;
     }
+
+    private static ShortUrlRedirectInfo CreateRedirectInfo(ContentItem shortUrlContentItem)
+    {
+        var shortUrlPart = shortUrlContentItem.As<ShortUrlPart>();
+        var utmPart = shortUrlContentItem.As<UtmPart>();
+
+        return new ShortUrlRedirectInfo
+        {
+            DestinationUrl = shortUrlPart.DestinationUrl.Text,
+            UtmSource = utmPart?.UtmSource.Text,
+            UtmMedium = utmPart?.UtmMedium.Text,
+            UtmCampaign = utmPart?.UtmCampaign.Text,
+            UtmContent = utmPart?.UtmContent.Text,
+            UtmTerm = utmPart?.Term.Text,
+        };
+    }
+
+    private string GetCacheKey(string shortUrl) =>
+        ShortUrlCacheKeyPrefix + shortUrl;
 }

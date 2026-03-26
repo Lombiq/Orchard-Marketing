@@ -77,8 +77,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
                 "The short URL must be a valid relative URL (for example: /short-url).");
         }
 
-        if (!Uri.TryCreate(part.DestinationUrl.Text, UriKind.RelativeOrAbsolute, out var destinationUri) ||
-            !destinationUri.IsWellFormedOriginalString())
+        if (!Uri.TryCreate(part.DestinationUrl.Text, UriKind.RelativeOrAbsolute, out var destinationUri))
         {
             _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
                 nameof(ShortUrlPart.DestinationUrl),
@@ -92,7 +91,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
                 "The destination URL must be an absolute URL or a relative URL starting with '/'.");
         }
 
-        if (!_updateModelAccessor.ModelUpdater.ModelState.IsValid || _previousShortUrlPart.ShortUrl.Text == part.ShortUrl.Text)
+        if (!_updateModelAccessor.ModelUpdater.ModelState.IsValid)
         {
             return;
         }
