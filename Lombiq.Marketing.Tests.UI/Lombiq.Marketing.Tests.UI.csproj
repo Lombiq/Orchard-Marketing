@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Lombiq Marketing for Orchard Core - UI Test Extensions</Title>
+    <Authors>Lombiq Technologies</Authors>
+    <Copyright>Copyright © 2026, Lombiq Technologies Ltd.</Copyright>
+    <Description>Lombiq Marketing for Orchard Core - UI Test Extensions: Extensions to aid in UI testing Lombiq Marketing for Orchard Core.</Description>
+    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;Pirsch;ShortUrl;xUnit;Test;UITest</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/src/Modules/Lombiq.Marketing/Lombiq.Marketing.Tests.UI/Readme.md</PackageProjectUrl>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
+    <ProjectReference Include="..\..\..\..\test\Lombiq.UITestingToolbox\Lombiq.Tests.UI\Lombiq.Tests.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+    <PackageReference Include="Lombiq.Tests.UI" Version="14.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Readme.md" />
+    <None Include="..\Lombiq.Marketing\NuGetIcon.png" Link="NuGetIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
