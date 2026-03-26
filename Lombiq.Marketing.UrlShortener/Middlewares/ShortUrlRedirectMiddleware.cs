@@ -56,6 +56,11 @@ public sealed class ShortUrlRedirectMiddleware
             return;
         }
 
+        // We don't want this redirect to be cached by browsers, so we have full control over changes in the target URL.
+        context.Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+        context.Response.Headers.Pragma = "no-cache";
+        context.Response.Headers.Expires = "0";
+
         // This redirect comes from user input, but we assume that the user is the site owner or a user we trust.
         // It might be a good idea to add a whitelist of allowed domains for absolute URLs in the future.
 #pragma warning disable SCS0027 // SCS0027: Potential Open Redirect vulnerability was found
