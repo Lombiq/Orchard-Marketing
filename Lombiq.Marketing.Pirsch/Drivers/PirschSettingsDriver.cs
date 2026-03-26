@@ -45,6 +45,7 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
                 viewModel.ClearClientSecret = false;
                 viewModel.ClientSideCodeSnippet = section.ClientSideCodeSnippet;
                 viewModel.DataDev = section.DataDev;
+                viewModel.AutoRenderZone = section.AutoRenderZone;
             })
             .Location("Content:1")
             .OnGroup(GroupId);
@@ -69,6 +70,7 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
 
         section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
         section.DataDev = viewModel.DataDev ?? string.Empty;
+        section.AutoRenderZone = viewModel.AutoRenderZone ?? string.Empty;
     }
 
     private async Task<bool> IsAuthorizedToManagePirschSettingsAsync()

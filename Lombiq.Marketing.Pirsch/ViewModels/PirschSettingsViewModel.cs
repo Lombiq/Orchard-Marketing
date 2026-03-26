@@ -11,4 +11,6 @@ public class PirschSettingsViewModel
     public string? ClientSideCodeSnippet { get; set; }
 
     public string? DataDev { get; set; }
+
+    public string? AutoRenderZone { get; set; }
 }

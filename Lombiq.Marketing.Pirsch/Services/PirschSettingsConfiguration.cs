@@ -28,5 +28,10 @@ public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettin
         {
             options.DataDev = settings.DataDev;
         }
+
+        if (!string.IsNullOrWhiteSpace(settings.AutoRenderZone))
+        {
+            options.AutoRenderZone = settings.AutoRenderZone;
+        }
     }
 }

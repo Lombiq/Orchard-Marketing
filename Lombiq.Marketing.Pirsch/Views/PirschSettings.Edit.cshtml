@@ -21,6 +21,15 @@
     </span>
 </fieldset>
 
+<fieldset class="mb-3" asp-validation-class-for="AutoRenderZone">
+    <label class="form-label" asp-for="AutoRenderZone">@T["Automatic Render Zone"]</label>
+    <input asp-for="AutoRenderZone" class="form-control" />
+    <span asp-validation-for="AutoRenderZone"></span>
+    <span class="hint">
+        @T["The layout zone where the client-side tracking shape should be rendered automatically. Leave empty to disable automatic rendering."]
+    </span>
+</fieldset>
+
 <fieldset class="mb-3" asp-validation-class-for="ClientSecret">
     <label class="form-label" asp-for="ClientSecret">@T["Client Secret"]</label>
 

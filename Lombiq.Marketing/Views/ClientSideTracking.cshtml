@@ -1,13 +1,20 @@
+@using Lombiq.Marketing.Models
 @using Lombiq.Marketing.Services
+@using System.Linq
 @inject IClientSideTrackingMarkupService ClientSideTrackingMarkupService
 
 @{
-    var viewModel = await ClientSideTrackingMarkupService.GetViewModelAsync();
+    var viewModels = Model?.ViewModels as IEnumerable<ClientSideTrackingViewModel> ??
+        await ClientSideTrackingMarkupService.GetViewModelsAsync();
+    var renderedViewModels = viewModels.Where(viewModel => !string.IsNullOrWhiteSpace(viewModel.Html)).ToList();
 
-    if (string.IsNullOrWhiteSpace(viewModel?.Html))
+    if (renderedViewModels.Count == 0)
     {
         return;
     }
 }
 
-@Html.Raw(viewModel.Html)
+@foreach (var viewModel in renderedViewModels)
+{
+    @Html.Raw(viewModel.Html)
+}

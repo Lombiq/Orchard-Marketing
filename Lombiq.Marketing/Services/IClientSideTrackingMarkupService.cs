@@ -1,4 +1,5 @@
 using Lombiq.Marketing.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Services;
@@ -9,10 +10,10 @@ namespace Lombiq.Marketing.Services;
 public interface IClientSideTrackingMarkupService
 {
     /// <summary>
-    /// Gets the client-side tracking view model.
+    /// Gets the client-side tracking view models.
     /// </summary>
-    /// <returns>The rendered view model, or <see langword="null"/> if there is nothing to render.</returns>
-    Task<ClientSideTrackingViewModel?> GetViewModelAsync();
+    /// <returns>The rendered view models.</returns>
+    Task<IReadOnlyList<ClientSideTrackingViewModel>> GetViewModelsAsync();
 
     /// <summary>
     /// Invalidates the cached client-side tracking output.

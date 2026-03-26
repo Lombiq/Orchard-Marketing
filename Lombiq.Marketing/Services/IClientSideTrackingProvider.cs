@@ -12,4 +12,10 @@ public interface IClientSideTrackingProvider
     /// </summary>
     /// <returns>The HTML markup to render, or <see langword="null"/> if the provider has nothing to output.</returns>
     Task<string?> GetClientSideTrackingMarkupAsync();
+
+    /// <summary>
+    /// Gets the layout zone where the client-side tracking shape should be injected automatically.
+    /// </summary>
+    /// <returns>The zone name, or <see langword="null"/> to use the default zone.</returns>
+    Task<string?> GetClientSideTrackingZoneAsync();
 }
