@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using OrchardCore.ContentManagement;
+using OrchardCore.ContentManagement.Records;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,8 @@ public class UrlShorteningService : IUrlShorteningService
 
         string? cachedRedirectUrl = null;
 
-        if (await _session.Query<ContentItem, ShortUrlPartIndex>(index => index.ShortUrl == shortUrl)
+        if (await _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
+            .With<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl)
             .FirstOrDefaultAsync() is { } shortUrlContentItem)
         {
             cachedRedirectUrl = SetCache(shortUrlContentItem);
@@ -54,7 +56,8 @@ public class UrlShorteningService : IUrlShorteningService
         }
 
         // Check if the short URL already exists in the database.
-        if (await _session.Query<ContentItem, ShortUrlPartIndex>(index =>
+        if (await _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
+            .With<ShortUrlPartIndex>(index =>
                 index.ShortUrl == shortUrlPart.ShortUrl.Text &&
                 index.ContentItemId != shortUrlPart.ContentItem.ContentItemId)
             .FirstOrDefaultAsync() is { } existingShortUrl)
