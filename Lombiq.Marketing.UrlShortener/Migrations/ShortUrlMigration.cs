@@ -57,7 +57,7 @@ public sealed class ShortUrlMigration : DataMigration
                 {
                     Hint = "The UTM content. It is used to identify the content of the traffic (for example: banner, link, etc.).",
                 }))
-            .WithField(nameof(UtmPart.Term), field => field
+            .WithField(nameof(UtmPart.UtmTerm), field => field
                 .OfType(nameof(TextField))
                 .WithDisplayName("UTM Term")
                 .WithSettings(new TextFieldSettings

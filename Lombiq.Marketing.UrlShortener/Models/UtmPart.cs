@@ -11,5 +11,5 @@ public class UtmPart : ContentPart
     public TextField UtmMedium { get; set; } = new();
     public TextField UtmCampaign { get; set; } = new();
     public TextField UtmContent { get; set; } = new();
-    public TextField Term { get; set; } = new();
+    public TextField UtmTerm { get; set; } = new();
 }
