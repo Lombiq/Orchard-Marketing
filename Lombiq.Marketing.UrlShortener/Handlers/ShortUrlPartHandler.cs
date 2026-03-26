@@ -20,7 +20,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     private readonly IMemoryCache _memoryCache;
     private readonly IClock _clock;
 
-    private ShortUrlPart _previousShortUrlPart;
+    private ShortUrlPart? _previousShortUrlPart;
 
     public ShortUrlPartHandler(
         IUrlShorteningService urlShorteningService,
@@ -96,7 +96,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             return;
         }
 
-        if (!await _urlShorteningService.UpdateShortUrlAsync(_previousShortUrlPart.ShortUrl.Text, part))
+        if (!await _urlShorteningService.UpdateShortUrlAsync(_previousShortUrlPart?.ShortUrl.Text, part))
         {
             _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
                 nameof(ShortUrlPart.ShortUrl),

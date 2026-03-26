@@ -29,7 +29,7 @@ public interface IUrlShorteningService
     /// <param name="previousShortUrl">The previous short URL value.</param>
     /// <param name="shortUrlPart">The updated short URL part.</param>
     /// <returns><see langword="true"/> if the mapping was updated. Otherwise <see langword="false"/>.</returns>
-    Task<bool> UpdateShortUrlAsync(string previousShortUrl, ShortUrlPart shortUrlPart);
+    Task<bool> UpdateShortUrlAsync(string? previousShortUrl, ShortUrlPart shortUrlPart);
 
     /// <summary>
     /// Deletes the short URL mapping for the supplied content item.

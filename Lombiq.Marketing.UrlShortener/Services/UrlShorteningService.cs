@@ -67,7 +67,7 @@ public class UrlShorteningService : IUrlShorteningService
         return true;
     }
 
-    public async Task<bool> UpdateShortUrlAsync(string previousShortUrl, ShortUrlPart shortUrlPart)
+    public async Task<bool> UpdateShortUrlAsync(string? previousShortUrl, ShortUrlPart shortUrlPart)
     {
         // If the short URL is being changed, we need to check if the new short URL is unique.
         if (!string.IsNullOrEmpty(previousShortUrl) &&
