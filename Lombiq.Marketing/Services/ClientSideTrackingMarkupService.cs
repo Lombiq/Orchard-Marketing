@@ -45,7 +45,7 @@ public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupS
             builtViewModels.Add(new ClientSideTrackingViewModel
             {
                 Html = markup,
-                Zone = await provider.GetClientSideTrackingZoneAsync() ?? string.Empty,
+                Zone = await provider.GetClientSideTrackingZoneAsync(),
             });
         }
 

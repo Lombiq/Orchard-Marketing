@@ -52,6 +52,6 @@ public sealed class PirschClientSideTrackingProvider : IClientSideTrackingProvid
         return renderedSnippet;
     }
 
-    public Task<string?> GetClientSideTrackingZoneAsync() =>
-        Task.FromResult<string?>(_pirschSettingsOptions.Value.AutoRenderZone);
+    public Task<string> GetClientSideTrackingZoneAsync() =>
+        Task.FromResult(_pirschSettingsOptions.Value.AutoRenderZone);
 }

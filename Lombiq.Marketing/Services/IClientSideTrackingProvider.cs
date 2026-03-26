@@ -17,5 +17,5 @@ public interface IClientSideTrackingProvider
     /// Gets the layout zone where the client-side tracking shape should be injected automatically.
     /// </summary>
     /// <returns>The zone name, or <see langword="null"/> to use the default zone.</returns>
-    Task<string?> GetClientSideTrackingZoneAsync();
+    Task<string> GetClientSideTrackingZoneAsync();
 }

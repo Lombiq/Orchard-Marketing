@@ -60,7 +60,7 @@ public static class PirschSettingsSanitizer
 
         foreach (var attributeName in removeAttributes) script.RemoveAttribute(attributeName);
 
-        if (!script.GetAttribute("src").EqualsOrdinalIgnoreCase(PirschProxyConstants.ProxyScriptPath))
+        if (!script.GetAttribute("src")?.EqualsOrdinalIgnoreCase(PirschProxyConstants.ProxyScriptPath) == true)
         {
             script.SetAttribute("src", PirschProxyConstants.ProxyScriptPath);
         }
