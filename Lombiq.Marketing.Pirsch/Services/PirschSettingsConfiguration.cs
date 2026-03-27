@@ -19,10 +19,9 @@ public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettin
             options.ClientSecret = settings.ClientSecret;
         }
 
-        if (!string.IsNullOrWhiteSpace(settings.ClientSideCodeSnippet))
-        {
-            options.ClientSideCodeSnippet = settings.ClientSideCodeSnippet;
-        }
+        options.ClientSideCodeSnippet = !string.IsNullOrWhiteSpace(settings.ClientSideCodeSnippet)
+            ? settings.ClientSideCodeSnippet
+            : PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(options.ClientSideCodeSnippet);
 
         if (!string.IsNullOrWhiteSpace(settings.DataDev))
         {
