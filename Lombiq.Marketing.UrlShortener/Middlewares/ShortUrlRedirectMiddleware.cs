@@ -50,7 +50,7 @@ public sealed class ShortUrlRedirectMiddleware
             await redirectEventHandler.RedirectingAsync(redirectContext);
         }
 
-        if (redirectContext.Cancel || string.IsNullOrEmpty(redirectContext.DestinationUrl))
+        if (redirectContext.Cancel)
         {
             await _next(context);
             return;
