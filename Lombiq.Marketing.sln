@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Marketing", "Lombiq.Marketing\Lombiq.Marketing.csproj", "{B10B000C-51A5-4F41-A8DF-AA5C57849D6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Marketing.UrlShortener", "Lombiq.Marketing.UrlShortener\Lombiq.Marketing.UrlShortener.csproj", "{B6231DB5-C862-4E5A-9807-973571564746}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Marketing.Pirsch", "Lombiq.Marketing.Pirsch\Lombiq.Marketing.Pirsch.csproj", "{DA5B7C3C-7E25-4A04-9D46-2063A0D12E58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Marketing.Tests.UI", "Lombiq.Marketing.Tests.UI\Lombiq.Marketing.Tests.UI.csproj", "{1A643D69-646F-4360-9592-ACA1C27CE7AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B10B000C-51A5-4F41-A8DF-AA5C57849D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B10B000C-51A5-4F41-A8DF-AA5C57849D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B10B000C-51A5-4F41-A8DF-AA5C57849D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B10B000C-51A5-4F41-A8DF-AA5C57849D6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6231DB5-C862-4E5A-9807-973571564746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6231DB5-C862-4E5A-9807-973571564746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6231DB5-C862-4E5A-9807-973571564746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6231DB5-C862-4E5A-9807-973571564746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA5B7C3C-7E25-4A04-9D46-2063A0D12E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA5B7C3C-7E25-4A04-9D46-2063A0D12E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA5B7C3C-7E25-4A04-9D46-2063A0D12E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA5B7C3C-7E25-4A04-9D46-2063A0D12E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A643D69-646F-4360-9592-ACA1C27CE7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A643D69-646F-4360-9592-ACA1C27CE7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A643D69-646F-4360-9592-ACA1C27CE7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A643D69-646F-4360-9592-ACA1C27CE7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
