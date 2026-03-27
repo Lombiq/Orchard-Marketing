@@ -14,9 +14,8 @@ namespace Lombiq.Marketing.Tests.UI.Extensions;
 public static class TestCaseUITestContextExtensions
 {
     private const string TestPirschScript = "<script defer=\"\" id=\"pianjs\" data-code=\"test\" data-dev=\"test\"></script>";
-    private const string UpdatedTestPirschScript = "<script defer=\"\" id=\"pianjsUpdated\" data-code=\"test\"></script>";
-    private const string UpdatedTestPirschScriptWithOverrideDataDev =
-        "<script defer=\"\" id=\"pianjsUpdated\" data-code=\"test\" data-dev=\"open-source-orchard-core-extensions.com\"></script>";
+    private static string UpdatedTestPirschScript(string id, string dataDev) =>
+        $"<script defer=\"\" id=\"{id}\" data-code=\"test\" data-dev=\"{dataDev}\"></script>";
 
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
@@ -96,13 +95,17 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnByLinkTextAsync("Marketing");
         await context.ClickReliablyOnByLinkTextAsync("Pirsch");
 
-        await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_ClientSideCodeSnippet"), UpdatedTestPirschScript);
+        await context.ClickAndFillInWithRetriesAsync(
+            By.Id("ISite_PirschSettings_ClientSideCodeSnippet"),
+            UpdatedTestPirschScript("pianjsUpdated", string.Empty));
         await context.ClickReliablyOnSubmitAsync();
         context.ShouldBeSuccess();
 
         await context.GoToHomePageAsync();
 
-        context.Driver.PageSource.ContainsOrdinalIgnoreCase(UpdatedTestPirschScriptWithOverrideDataDev).ShouldBeTrue();
+        context.Driver.PageSource
+            .ContainsOrdinalIgnoreCase(UpdatedTestPirschScript("pianjsUpdated", "open-source-orchard-core-extensions.com"))
+            .ShouldBeTrue();
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
@@ -111,8 +114,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToHomePageAsync();
 
-        context.Driver.PageSource.ContainsOrdinalIgnoreCase(UpdatedTestPirschScript).ShouldBeTrue();
-        context.Driver.PageSource.ContainsOrdinalIgnoreCase("data-dev=\"newDataDev\"").ShouldBeTrue();
+        context.Driver.PageSource.ContainsOrdinalIgnoreCase(UpdatedTestPirschScript("pianjsUpdated", "newDataDev")).ShouldBeTrue();
     }
 
     public static void SetPirschClientTrackerConfiguration(this OrchardCoreUITestExecutorConfiguration configuration) =>
@@ -140,6 +142,7 @@ public static class TestCaseUITestContextExtensions
         logEntry.Level >= LogLevel.Error &&
         !IsExpectedPirschShortUrlError(logEntry);
 
+    // Since we don't want to send real data, we have to suppress these.
     private static bool IsExpectedPirschShortUrlError(IApplicationLogEntry logEntry) =>
         (logEntry.Category == "Lombiq.Marketing.Pirsch.Services.PirschApiClient" &&
         logEntry.Message.ContainsOrdinalIgnoreCase("Cannot send a request to Pirsch API because the client secret is not configured")) ||
