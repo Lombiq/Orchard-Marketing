@@ -6,9 +6,9 @@ namespace Lombiq.Marketing.UrlShortener.Indexes;
 
 public class ShortUrlPartIndex : MapIndex
 {
-    public string ContentItemId { get; set; }
-    public string ShortUrl { get; set; }
-    public string DestinationUrl { get; set; }
+    public string? ContentItemId { get; set; }
+    public string? ShortUrl { get; set; }
+    public string? DestinationUrl { get; set; }
 }
 
 public class ShortUrlPartIndexProvider : IndexProvider<ContentItem>

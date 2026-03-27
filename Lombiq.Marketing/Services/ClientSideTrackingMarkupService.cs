@@ -9,7 +9,6 @@ namespace Lombiq.Marketing.Services;
 public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupService
 {
     private const string MemoryCacheKeyPrefix = "Lombiq.Marketing.ClientSideTracking";
-    private const string CacheKey = $"{MemoryCacheKeyPrefix}:{nameof(GetViewModelsAsync)}";
 
     private readonly IMemoryCache _memoryCache;
     private readonly IEnumerable<IClientSideTrackingProvider> _providers;
@@ -25,9 +24,9 @@ public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupS
         _signal = signal;
     }
 
-    public async Task<IReadOnlyList<ClientSideTrackingViewModel>> GetViewModelsAsync()
+    public async Task<IReadOnlyList<ClientSideTrackingViewModel>?> GetViewModelsAsync()
     {
-        if (_memoryCache.TryGetValue(CacheKey, out IReadOnlyList<ClientSideTrackingViewModel>? viewModels))
+        if (_memoryCache.TryGetValue(MemoryCacheKeyPrefix, out IReadOnlyList<ClientSideTrackingViewModel>? viewModels))
         {
             return viewModels;
         }
@@ -51,7 +50,7 @@ public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupS
 
         viewModels = builtViewModels;
 
-        _memoryCache.Set(CacheKey, viewModels, _signal.GetToken(MemoryCacheKeyPrefix));
+        _memoryCache.Set(MemoryCacheKeyPrefix, viewModels, _signal.GetToken(MemoryCacheKeyPrefix));
 
         return viewModels;
     }

@@ -48,7 +48,7 @@ public class UrlShorteningService : IUrlShorteningService
 
     public async Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart)
     {
-        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out ShortUrlTargetUrls _))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out ShortUrlTargetUrls? _))
         {
             return false;
         }

@@ -13,7 +13,7 @@ public interface IClientSideTrackingMarkupService
     /// Gets the client-side tracking view models.
     /// </summary>
     /// <returns>The rendered view models.</returns>
-    Task<IReadOnlyList<ClientSideTrackingViewModel>> GetViewModelsAsync();
+    Task<IReadOnlyList<ClientSideTrackingViewModel>?> GetViewModelsAsync();
 
     /// <summary>
     /// Invalidates the cached client-side tracking output.

@@ -6,9 +6,9 @@
 @{
     var viewModels = Model?.ViewModels as IEnumerable<ClientSideTrackingViewModel> ??
         await ClientSideTrackingMarkupService.GetViewModelsAsync();
-    var renderedViewModels = viewModels.Where(viewModel => !string.IsNullOrWhiteSpace(viewModel.Html)).ToList();
+    var renderedViewModels = viewModels?.Where(viewModel => !string.IsNullOrWhiteSpace(viewModel.Html)).ToList();
 
-    if (renderedViewModels.Count == 0)
+    if (!(renderedViewModels?.Count > 0))
     {
         return;
     }
