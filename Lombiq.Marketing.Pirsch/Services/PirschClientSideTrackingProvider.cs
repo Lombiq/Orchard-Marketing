@@ -1,6 +1,6 @@
+using AngleSharp.Html.Parser;
 using Lombiq.Marketing.Pirsch.Models;
 using Lombiq.Marketing.Services;
-using AngleSharp.Html.Parser;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System.Linq;
