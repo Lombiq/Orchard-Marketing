@@ -24,7 +24,7 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
         var success = await _pirschApiClient.SendHitAsync(
             new PirschHitRequest
             {
-                Url = context.Url,
+                Url = context.TrackingUrlWithUtmParameters,
                 Ip = context.Ip,
                 UserAgent = context.UserAgent,
                 AcceptLanguage = context.AcceptLanguage,
@@ -42,14 +42,14 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
         if (!success)
         {
             _logger.LogError(
-                "Failed to send a hit to Pirsch API for the redirected short URL: {Url}. Check logs for more info",
-                context.Url);
+                "Failed to send a hit to Pirsch API for the tracked target URL: {Url}. Check logs for more info",
+                context.TrackingUrlWithUtmParameters);
         }
         else
         {
             _logger.LogInformation(
-                "Successfully sent a hit to Pirsch API for the redirected short URL: {Url}",
-                context.Url);
+                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}",
+                context.TrackingUrlWithUtmParameters);
         }
     }
 }

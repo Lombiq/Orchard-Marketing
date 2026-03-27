@@ -47,12 +47,7 @@ public static class TestCaseUITestContextExtensions
         await context.GoToRelativeUrlAsync(shortUrl, onlyIfNotAlreadyThere: false);
         var redirectedUri = context.GetCurrentUri();
         redirectedUri.AbsolutePath.ShouldBe("/");
-        var query = QueryHelpers.ParseQuery(redirectedUri.Query);
-        query["utm_source"].ToString().ShouldBe("newsletter");
-        query["utm_medium"].ToString().ShouldBe("email");
-        query["utm_campaign"].ToString().ShouldBe("spring-sale");
-        query["utm_content"].ToString().ShouldBe("hero-banner");
-        query["utm_term"].ToString().ShouldBe("orchard-core");
+        QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
 
         await context.GoToDashboardAsync();
         await context.ClickReliablyOnByLinkTextAsync("Short URLs");
@@ -70,7 +65,7 @@ public static class TestCaseUITestContextExtensions
         await context.GoToRelativeUrlAsync(updatedShortUrl, onlyIfNotAlreadyThere: false);
         var updatedUri = context.GetCurrentUri();
         updatedUri.AbsolutePath.ShouldBe("/");
-        QueryHelpers.ParseQuery(updatedUri.Query)["utm_campaign"].ToString().ShouldBe("summer-sale");
+        QueryHelpers.ParseQuery(updatedUri.Query).ShouldBeEmpty();
 
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
@@ -83,7 +78,6 @@ public static class TestCaseUITestContextExtensions
         await context.FilterOnAdminAsync(title);
         context.Exists(By.XPath($"//a[normalize-space()='{title}']").Safely()).ShouldBeFalse();
 
-        // Now none of the short urls should work.
         await context.GoToRelativeUrlAsync(updatedShortUrl, onlyIfNotAlreadyThere: false);
         context.GetCurrentUri().AbsolutePath.ShouldBe(updatedShortUrl);
         await context.GoToRelativeUrlAsync(shortUrl, onlyIfNotAlreadyThere: false);
@@ -150,7 +144,7 @@ public static class TestCaseUITestContextExtensions
         (logEntry.Category == "Lombiq.Marketing.Pirsch.Services.PirschApiClient" &&
         logEntry.Message.ContainsOrdinalIgnoreCase("Cannot send a request to Pirsch API because the client secret is not configured")) ||
         (logEntry.Category == "Lombiq.Marketing.Pirsch.Services.PirschShortUrlHitHandler" &&
-        logEntry.Message.ContainsOrdinalIgnoreCase("Failed to send a hit to Pirsch API for the redirected short URL:"));
+        logEntry.Message.ContainsOrdinalIgnoreCase("Failed to send a hit to Pirsch API for the tracked target URL:"));
 
     public static Task FillShortUrlFieldAsync(this UITestContext context, string id, string value) =>
         context.ClickAndFillInWithRetriesAsync(

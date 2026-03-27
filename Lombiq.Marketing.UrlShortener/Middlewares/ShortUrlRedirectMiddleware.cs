@@ -31,8 +31,8 @@ public sealed class ShortUrlRedirectMiddleware
             return;
         }
 
-        var destinationUrl = await urlShorteningService.GetRedirectUrlAsync(shortUrl);
-        if (string.IsNullOrEmpty(destinationUrl))
+        var targetUrls = await urlShorteningService.GetTargetUrlsAsync(shortUrl);
+        if (targetUrls is null)
         {
             await _next(context);
             return;
@@ -42,7 +42,8 @@ public sealed class ShortUrlRedirectMiddleware
         {
             HttpContext = context,
             ShortUrl = shortUrl,
-            DestinationUrl = destinationUrl,
+            DestinationUrl = targetUrls.RedirectUrl,
+            TrackingUrlWithUtmParameters = targetUrls.TrackingUrlWithUtmParameters,
         };
 
         foreach (var redirectEventHandler in redirectEventHandlers)

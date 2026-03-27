@@ -9,7 +9,7 @@ public sealed class ShortUrlHitContext
 
     public required string DestinationUrl { get; init; }
 
-    public required string Url { get; init; }
+    public required string TrackingUrlWithUtmParameters { get; init; }
 
     public string? Ip { get; init; }
 

@@ -2,6 +2,7 @@ using Lombiq.Marketing.Models;
 using Lombiq.Marketing.UrlShortener.Events;
 using Microsoft.AspNetCore.Http.Extensions;
 using OrchardCore.Modules;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -23,11 +24,15 @@ public sealed class MarketingShortUrlRedirectEventHandler : IShortUrlRedirectEve
     public async Task RedirectingAsync(ShortUrlRedirectContext context)
     {
         var request = context.HttpContext.Request;
+        var trackingUrlWithUtmParameters = Uri.TryCreate(context.TrackingUrlWithUtmParameters, UriKind.Absolute, out var absoluteTrackingUri)
+            ? absoluteTrackingUri.ToString()
+            : new Uri(new Uri(request.GetDisplayUrl()), context.TrackingUrlWithUtmParameters).ToString();
+
         var hitContext = new ShortUrlHitContext
         {
             ShortUrl = context.ShortUrl,
             DestinationUrl = context.DestinationUrl,
-            Url = request.GetDisplayUrl(),
+            TrackingUrlWithUtmParameters = trackingUrlWithUtmParameters,
             Ip = context.HttpContext.Connection.RemoteIpAddress?.ToString(),
             UserAgent = request.Headers.UserAgent.ToString(),
             AcceptLanguage = request.Headers.AcceptLanguage.ToString(),

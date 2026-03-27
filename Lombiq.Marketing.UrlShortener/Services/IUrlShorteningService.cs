@@ -10,11 +10,11 @@ namespace Lombiq.Marketing.UrlShortener.Services;
 public interface IUrlShorteningService
 {
     /// <summary>
-    /// Gets the final redirect URL for a short URL.
+    /// Gets the redirect and tracking URLs for a short URL.
     /// </summary>
     /// <param name="shortUrl">The short URL path.</param>
-    /// <returns>The redirect URL, or <see langword="null"/> if no mapping exists.</returns>
-    Task<string?> GetRedirectUrlAsync(string shortUrl);
+    /// <returns>The target URLs, or <see langword="null"/> if no mapping exists.</returns>
+    Task<ShortUrlTargetUrls?> GetTargetUrlsAsync(string shortUrl);
 
     /// <summary>
     /// Checks whether the short URL value of the supplied part is unique.

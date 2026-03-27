@@ -10,5 +10,7 @@ public sealed class ShortUrlRedirectContext
 
     public required string DestinationUrl { get; set; }
 
+    public required string TrackingUrlWithUtmParameters { get; init; }
+
     public bool Cancel { get; set; }
 }

@@ -16,7 +16,7 @@ namespace Lombiq.Marketing.UrlShortener.Services;
 
 public class UrlShorteningService : IUrlShorteningService
 {
-    private const string ShortUrlCacheKeyPrefix = "ShortUrlRedirectUrl:";
+    private const string ShortUrlCacheKeyPrefix = "ShortUrlTargetUrls:";
 
     private readonly ISession _session;
     private readonly IMemoryCache _memoryCache;
@@ -27,42 +27,38 @@ public class UrlShorteningService : IUrlShorteningService
         _memoryCache = memoryCache;
     }
 
-    public async Task<string?> GetRedirectUrlAsync(string shortUrl)
+    public async Task<ShortUrlTargetUrls?> GetTargetUrlsAsync(string shortUrl)
     {
-        if (_memoryCache.TryGetValue(GetCacheKey(shortUrl), out string? redirectUrl))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrl), out ShortUrlTargetUrls? targetUrls))
         {
-            return redirectUrl;
+            return targetUrls;
         }
 
-        string? cachedRedirectUrl = null;
+        ShortUrlTargetUrls? cachedTargetUrls = null;
 
         if (await _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
             .With<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl)
             .FirstOrDefaultAsync() is { } shortUrlContentItem)
         {
-            cachedRedirectUrl = SetCache(shortUrlContentItem);
+            cachedTargetUrls = SetCache(shortUrlContentItem);
         }
 
-        return cachedRedirectUrl;
+        return cachedTargetUrls;
     }
 
     public async Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart)
     {
-        // Check if the short URL already exists in the cache. This is a quick check to avoid hitting the database if
-        // we already know the short URL is taken.
-        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out string _))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out ShortUrlTargetUrls _))
         {
             return false;
         }
 
-        // Check if the short URL already exists in the database.
         if (await _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
             .With<ShortUrlPartIndex>(index =>
                 index.ShortUrl == shortUrlPart.ShortUrl.Text &&
                 index.ContentItemId != shortUrlPart.ContentItem.ContentItemId)
             .FirstOrDefaultAsync() is { } existingShortUrl)
         {
-            // Cache the existing short URL to prevent future database hits for the same short URL.
             SetCache(existingShortUrl);
             return false;
         }
@@ -72,7 +68,6 @@ public class UrlShorteningService : IUrlShorteningService
 
     public async Task<bool> UpdateShortUrlAsync(string? previousShortUrl, ShortUrlPart shortUrlPart)
     {
-        // If the short URL is being changed, we need to check if the new short URL is unique.
         if (!string.IsNullOrEmpty(previousShortUrl) &&
             shortUrlPart.ShortUrl.Text != previousShortUrl &&
             !await IsShortUrlUniqueAsync(shortUrlPart))
@@ -92,44 +87,47 @@ public class UrlShorteningService : IUrlShorteningService
 
     public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem)
     {
-        // Remove the short URL from the cache to ensure it doesn't return stale data after deletion.
         RemoveCache(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text);
         return Task.CompletedTask;
     }
 
-    private string SetCache(ContentItem shortUrlContentItem) =>
+    private ShortUrlTargetUrls SetCache(ContentItem shortUrlContentItem) =>
         SetCache(shortUrlContentItem.As<ShortUrlPart>());
 
-    private string SetCache(ShortUrlPart shortUrlPart)
+    private ShortUrlTargetUrls SetCache(ShortUrlPart shortUrlPart)
     {
-        var redirectUrl = BuildRedirectUrl(shortUrlPart.ContentItem);
-        _memoryCache.Set(GetCacheKey(shortUrlPart.ShortUrl.Text), redirectUrl);
+        var targetUrls = BuildTargetUrls(shortUrlPart.ContentItem);
+        _memoryCache.Set(GetCacheKey(shortUrlPart.ShortUrl.Text), targetUrls);
 
-        return redirectUrl;
+        return targetUrls;
     }
 
     private void RemoveCache(string shortUrl) =>
         _memoryCache.Remove(GetCacheKey(shortUrl));
 
-    private static string BuildRedirectUrl(ContentItem shortUrlContentItem)
+    private static ShortUrlTargetUrls BuildTargetUrls(ContentItem shortUrlContentItem)
     {
         var shortUrlPart = shortUrlContentItem.As<ShortUrlPart>();
         var utmPart = shortUrlContentItem.As<UtmPart>();
 
-        return BuildRedirectUrl(shortUrlPart.DestinationUrl.Text, utmPart);
+        return new ShortUrlTargetUrls
+        {
+            RedirectUrl = shortUrlPart.DestinationUrl.Text,
+            TrackingUrlWithUtmParameters = BuildTrackingUrl(shortUrlPart.DestinationUrl.Text, utmPart),
+        };
     }
 
-    private static string BuildRedirectUrl(string destinationUrl, UtmPart utmPart)
+    private static string BuildTrackingUrl(string destinationUrl, UtmPart utmPart)
     {
         if (Uri.TryCreate(destinationUrl, UriKind.RelativeOrAbsolute, out var destinationUri) && destinationUri.IsAbsoluteUri)
         {
-            return BuildAbsoluteRedirectUrl(destinationUri, utmPart);
+            return BuildAbsoluteTrackingUrl(destinationUri, utmPart);
         }
 
-        return BuildRelativeRedirectUrl(destinationUrl, utmPart);
+        return BuildRelativeTrackingUrl(destinationUrl, utmPart);
     }
 
-    private static string BuildAbsoluteRedirectUrl(Uri destinationUri, UtmPart utmPart)
+    private static string BuildAbsoluteTrackingUrl(Uri destinationUri, UtmPart utmPart)
     {
         var queryParameters = CreateQueryParameters(destinationUri.Query, utmPart);
         var queryBuilder = BuildQueryString(queryParameters);
@@ -142,7 +140,7 @@ public class UrlShorteningService : IUrlShorteningService
         return uriBuilder.Uri.ToString();
     }
 
-    private static string BuildRelativeRedirectUrl(string destinationUrl, UtmPart utmPart)
+    private static string BuildRelativeTrackingUrl(string destinationUrl, UtmPart utmPart)
     {
         var fragmentStartIndex = destinationUrl.IndexOf('#');
         var fragment = fragmentStartIndex >= 0 ? destinationUrl[fragmentStartIndex..] : string.Empty;
