@@ -40,7 +40,7 @@
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
     <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="9.0.0" />
-    <PackageReference Include="Lombiq.Marketing" Version="0.1.0-alpha.0.osoe-1239" />
+    <PackageReference Include="Lombiq.Marketing" Version="0.0.0-alpha.0.osoe-1239" />
   </ItemGroup>
 
 </Project>
