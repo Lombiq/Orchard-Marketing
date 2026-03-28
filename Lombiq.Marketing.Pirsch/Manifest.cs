@@ -7,7 +7,7 @@ using MarketingFeatureIds = Lombiq.Marketing.Constants.FeatureIds;
     Author = "Lombiq Technologies",
     Version = "0.0.1",
     Description = "Integrate the basics of Pirsch into Orchard Core.",
-    Website = "https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions"
+    Website = "https://github.com/Lombiq/Orchard-Marketing"
 )]
 
 [assembly: Feature(

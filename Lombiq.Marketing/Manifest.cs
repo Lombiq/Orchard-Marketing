@@ -6,7 +6,7 @@ using OrchardCore.Modules.Manifest;
     Author = "Lombiq Technologies",
     Version = "0.0.1",
     Description = "",
-    Website = "https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions"
+    Website = "https://github.com/Lombiq/Orchard-Marketing"
 )]
 
 [assembly: Feature(
