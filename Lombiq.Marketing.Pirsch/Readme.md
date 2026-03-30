@@ -19,7 +19,7 @@ It supports these scenarios:
 - Client-side tracking with a script snippet.
 - [Proxy](https://docs.pirsch.io/advanced/proxy) for the Pirsch script.
 - Pirsch script is sanitized and proxy is used.
-- Automatic rendering of the tracking script into a selected zone. Otherwise, manually use `ClientSideTracking` shape in your theme head section.
+- Automatic rendering of the tracking script into a selected zone. Otherwise, manually use the `ClientSideTracking` shape in your theme's head section.
 - Server-side hit registration for [short URL redirects](..\Lombiq.Marketing.UrlShortener\Readme.md).
 - [Client Hints](https://docs.pirsch.io/get-started/client-hints) support for better tracking.
 - Admin settings with appsettings fallback.
@@ -29,14 +29,14 @@ Pirsch settings can come from appsettings or from the Orchard admin. If both are
 
 To use the module, follow these steps:
 
-- Enable the `Lombiq.Marketing.Pirsch` feature from the admin.
-- Open `Configuration -> Settings -> Marketing -> Pirsch`.
-- Configure the client secret, client-side tracking snippet, and optional other settings.
-- If you want automatic rendering, set the zone where the script should be rendered.
+1. Enable the `Lombiq.Marketing.Pirsch` feature from the admin.
+2. Open `Configuration -> Settings -> Marketing -> Pirsch`.
+3. Configure the client secret, client-side tracking snippet, and optional other settings.
+4. If you want automatic rendering, set the zone where the script should be rendered.
 
 Example appsettings or environment variable configuration:
 
-```json
+```json5
 {
     "OrchardCore": {
         "Lombiq_Marketing": {
