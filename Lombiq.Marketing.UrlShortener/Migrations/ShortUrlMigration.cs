@@ -27,36 +27,39 @@ public sealed class ShortUrlMigration : DataMigration
                 .WithDisplayName("UTM Source")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The UTM source. It is used to identify the source of the traffic (for example: google, newsletter, etc.).",
+                    Hint = "The name of the website, social media platform, newsletter, or other campaign source " +
+                        "where the link is shared. E.g.: lombiq-newsletter, linkedin, youtube, x, partner-site, google.",
                 }))
             .WithField(nameof(UtmPart.UtmMedium), field => field
                 .OfType(nameof(TextField))
                 .WithDisplayName("UTM Medium")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The UTM medium. It is used to identify the medium of the traffic (for example: cpc, email, etc.).",
+                    Hint = "The type of the channel where the link is shared. E.g.: social, email, referral, cpc.).",
                 }))
             .WithField(nameof(UtmPart.UtmCampaign), field => field
                 .OfType(nameof(TextField))
                 .WithDisplayName("UTM Campaign")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The UTM campaign. It is used to identify the campaign of the traffic (for example: summer-sale, etc.).",
+                    Hint = "The name of the specific campaign, identifying all links shared during the campaign. " +
+                        "E.g.: summer-sale-2026, lombiq-newsletter-2026-03-31.",
                 }))
             .WithField(nameof(UtmPart.UtmContent), field => field
                 .OfType(nameof(TextField))
                 .WithDisplayName("UTM Content")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The UTM content. It is used to identify the content of the traffic (for example: banner, link, etc.).",
+                    Hint = "The name of the specific link. Useful if you have multiple links from e.g. the same " +
+                        "landing page or blog post. E.g.: banner, cta-button, foot-menu-link.",
                 }))
             .WithField(nameof(UtmPart.UtmTerm), field => field
                 .OfType(nameof(TextField))
                 .WithDisplayName("UTM Term")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The UTM term. Only relevant for paid ads and is used to filter for search terms used by visitors." +
-                        " It is used to identify the term of the traffic (for example: shoes, etc.).",
+                    Hint = "Only relevant for paid search ads and is used to filter for search terms (keywords) used " +
+                        "by visitors.",
                 }))
         );
 
@@ -67,7 +70,7 @@ public sealed class ShortUrlMigration : DataMigration
                 .WithSettings(new TextFieldSettings
                 {
                     Required = true,
-                    Hint = "The short URL. It can only be a unique relative URL (for example: /short-url).",
+                    Hint = "The short URL can only be a unique relative URL (for example: /short-url).",
                 }))
             .WithField(nameof(ShortUrlPart.DestinationUrl), field => field
                 .OfType(nameof(TextField))
@@ -75,7 +78,7 @@ public sealed class ShortUrlMigration : DataMigration
                 .WithSettings(new TextFieldSettings
                 {
                     Required = true,
-                    Hint = "The destination URL. It can be an absolute URL (https://example.com) or a relative URL (/my-page).",
+                    Hint = "The destination URL can be an absolute URL (https://example.com) or a relative URL (/my-page).",
                 })));
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.ShortUrl, type => type
