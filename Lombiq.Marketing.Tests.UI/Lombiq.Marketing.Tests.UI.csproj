@@ -12,7 +12,7 @@
     <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;Pirsch;ShortUrl;xUnit;Test;UITest</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/src/Modules/Lombiq.Marketing/Lombiq.Marketing.Tests.UI/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/Lombiq.Marketing.Tests.UI/Readme.md</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 

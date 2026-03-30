@@ -15,7 +15,7 @@
     <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;UrlShortener;ShortUrl;Redirect</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/src/Modules/Lombiq.Marketing/Lombiq.Marketing.UrlShortener/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/Lombiq.Marketing.UrlShortener/Readme.md</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 
