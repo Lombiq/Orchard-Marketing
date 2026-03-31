@@ -1,32 +1,33 @@
 using Lombiq.Marketing.Models;
-using Microsoft.Extensions.Caching.Memory;
-using OrchardCore.Environment.Cache;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Services;
 
 public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupService
 {
-    private const string MemoryCacheKeyPrefix = "Lombiq.Marketing.ClientSideTracking";
+    private const string DistributedCacheKey = "Lombiq.Marketing.ClientSideTracking";
 
-    private readonly IMemoryCache _memoryCache;
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new(JsonSerializerDefaults.Web);
+
+    private readonly IDistributedCache _distributedCache;
     private readonly IEnumerable<IClientSideTrackingProvider> _providers;
-    private readonly ISignal _signal;
 
     public ClientSideTrackingMarkupService(
-        IMemoryCache memoryCache,
-        IEnumerable<IClientSideTrackingProvider> providers,
-        ISignal signal)
+        IDistributedCache distributedCache,
+        IEnumerable<IClientSideTrackingProvider> providers)
     {
-        _memoryCache = memoryCache;
+        _distributedCache = distributedCache;
         _providers = providers;
-        _signal = signal;
     }
 
     public async Task<IReadOnlyList<ClientSideTrackingViewModel>?> GetViewModelsAsync()
     {
-        if (_memoryCache.TryGetValue(MemoryCacheKeyPrefix, out IReadOnlyList<ClientSideTrackingViewModel>? viewModels))
+        var cachedViewModels = await _distributedCache.GetStringAsync(DistributedCacheKey);
+        if (!string.IsNullOrEmpty(cachedViewModels) &&
+            JsonSerializer.Deserialize<List<ClientSideTrackingViewModel>>(cachedViewModels, _jsonSerializerOptions) is { } viewModels)
         {
             return viewModels;
         }
@@ -48,12 +49,12 @@ public sealed class ClientSideTrackingMarkupService : IClientSideTrackingMarkupS
             });
         }
 
-        viewModels = builtViewModels;
+        await _distributedCache.SetStringAsync(
+            DistributedCacheKey,
+            JsonSerializer.Serialize(builtViewModels, _jsonSerializerOptions));
 
-        _memoryCache.Set(MemoryCacheKeyPrefix, viewModels, _signal.GetToken(MemoryCacheKeyPrefix));
-
-        return viewModels;
+        return builtViewModels;
     }
 
-    public Task InvalidateCachedViewModelAsync() => _signal.SignalTokenAsync(MemoryCacheKeyPrefix);
+    public Task InvalidateCachedViewModelAsync() => _distributedCache.RemoveAsync(DistributedCacheKey);
 }
