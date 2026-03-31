@@ -122,7 +122,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 
         if (string.IsNullOrEmpty(part.ContentItem.DisplayText))
         {
-            part.ContentItem.DisplayText = part.ShortUrl.Text;
+            part.ContentItem.DisplayText = part.DestinationUrl.Text;
         }
 
         _previousShortUrlPart = part;
