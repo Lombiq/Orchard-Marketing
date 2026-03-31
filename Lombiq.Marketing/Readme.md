@@ -23,16 +23,16 @@ Usually you won't use this module on its own. It is the base for other modules, 
 
 To use the module, follow these steps:
 
-- Add the module to your solution.
-- Enable the `Lombiq.Marketing` feature if a dependent module doesn't enable it for you.
-- Add one or more marketing provider modules on top of it.
+1. Add the module to your solution.
+2. Enable the `Lombiq.Marketing` feature if a dependent module doesn't enable it for you.
+3. Add one or more marketing provider modules on top of it.
 
 To implement a marketing provider module like `Lombiq.Marketing.Pirsch`, follow these steps:
 
-- Reference `Lombiq.Marketing` from your provider project.
-- If you want to register hits for short URL redirects, implement `IShortUrlHitHandler`.
-- If you want to inject client-side tracking markup, implement `IClientSideTrackingProvider`.
-- Register your services from your module startup.
-- Add your own settings, API client, proxy, or other provider-specific logic in your provider module.
-- If your settings change the rendered client-side tracking markup, use `ClientSideTrackingSiteDisplayDriver<TSettings>` for the settings driver so the shared markup cache is invalidated automatically.
-- If needed, add your own admin UI, maintenance tasks, and tests the same way as the Pirsch module does.
+1. Reference `Lombiq.Marketing` from your provider project.
+2. If you want to register hits for short URL redirects, implement `IShortUrlHitHandler`.
+3. If you want to inject client-side tracking markup, implement `IClientSideTrackingProvider`.
+4. Register your services from your module startup.
+5. Add your own settings, API client, proxy, or other provider-specific logic in your provider module.
+6. If your settings change the rendered client-side tracking markup, use `ClientSideTrackingSiteDisplayDriver<TSettings>` for the settings driver so the shared markup cache is invalidated automatically.
+7. If needed, add your own admin UI, maintenance tasks, and tests the same way as the Pirsch module does.
