@@ -8,7 +8,7 @@
     <textarea asp-for="ClientSideCodeSnippet" class="form-control font-monospace" rows="14" spellcheck="false"></textarea>
     <span asp-validation-for="ClientSideCodeSnippet"></span>
     <span class="hint">
-        @T["Paste the script snippet from your Pirsch dashboard under \"Settings/Integration\". On save only the supported script tag and attributes are kept, and the src is rewritten to the proxy URL."]
+        @T["Paste the script snippet from your website's Pirsch dashboard under Settings → Integration. On save only the supported script tag and attributes are kept, and the src is rewritten to the proxy URL."]
     </span>
 </fieldset>
 
@@ -17,7 +17,7 @@
     <input asp-for="DataDev" class="form-control" />
     <span asp-validation-for="DataDev"></span>
     <span class="hint">
-        @T["Override for the data dev attribute in the client script. More info about data-dev attribute: https://docs.pirsch.io/get-started/frontend-integration#testing-pirsch-locally"]
+        @T["Override for the data dev attribute in the client script. See <a href=\"https://docs.pirsch.io/get-started/frontend-integration#testing-pirsch-locally\" target=\"_blank\">the official documentation</a> about the data-dev attribute."]
     </span>
 </fieldset>
 
@@ -32,11 +32,10 @@
 
 <fieldset class="mb-3" asp-validation-class-for="ClientSecret">
     <label class="form-label" asp-for="ClientSecret">@T["Client Secret"]</label>
-
     <input asp-for="ClientSecret" class="form-control" type="password" autocomplete="new-password" placeholder="@placeholder" />
     <span asp-validation-for="ClientSecret"></span>
     <span class="hint">
-        @T["Only Access Key type client is supported. Get it from your Pirsch dashboard under \"Settings/Integration\". Leave this empty to keep the existing secret."]
+        @T["Only Access Key type client is supported. Get it from your website's Pirsch dashboard under Settings → Integration → Clients to configure access to only a single site; use your account menu → Account → Clients to all your sites. Leave this empty to keep the existing secret."]
     </span>
 
     @if (Model.HasClientSecret)
