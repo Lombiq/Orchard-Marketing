@@ -41,7 +41,7 @@ public sealed class PirschApiClient : IPirschApiClient
         var accessKey = _pirschSettingsOptions.Value.ClientSecret;
         if (string.IsNullOrWhiteSpace(accessKey))
         {
-            _logger.LogError("Cannot send a request to Pirsch API because the client secret is not configured");
+            _logger.LogError("Cannot send a request to Pirsch API because the client secret is not configured.");
             return false;
         }
 
@@ -55,12 +55,12 @@ public sealed class PirschApiClient : IPirschApiClient
             responseMessage.EnsureSuccessStatusCode();
 
             _logger.LogInformation(
-                "Successfully sent a request to Pirsch API. Request URI: {RequestUri}",
+                "Successfully sent a request to Pirsch API. Request URI: {RequestUri}.",
                 requestUri);
         }
         catch (HttpRequestException httpRequestException)
         {
-            _logger.LogError(httpRequestException, "There was a problem sending the request to the Pirsch API");
+            _logger.LogError(httpRequestException, "There was a problem sending the request to the Pirsch API.");
             return false;
         }
 

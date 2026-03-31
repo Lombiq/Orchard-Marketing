@@ -42,13 +42,13 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
         if (!success)
         {
             _logger.LogError(
-                "Failed to send a hit to Pirsch API for the tracked target URL: {Url}. Check logs for more info",
+                "Failed to send a hit to Pirsch API for the tracked target URL: {Url}. Check logs for more info.",
                 context.TrackingUrlWithUtmParameters);
         }
         else
         {
             _logger.LogInformation(
-                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}",
+                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}.",
                 context.TrackingUrlWithUtmParameters);
         }
     }

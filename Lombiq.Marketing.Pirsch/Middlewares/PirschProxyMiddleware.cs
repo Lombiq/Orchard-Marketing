@@ -83,7 +83,7 @@ public sealed class PirschProxyMiddleware
         }
         catch (HttpRequestException exception)
         {
-            _logger.LogWarning(exception, "Failed to proxy the Pirsch request for path {RequestPath}", context.Request.Path);
+            _logger.LogWarning(exception, "Failed to proxy the Pirsch request for path {RequestPath}.", context.Request.Path);
         }
     }
 
