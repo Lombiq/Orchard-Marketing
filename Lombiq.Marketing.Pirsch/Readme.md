@@ -20,7 +20,7 @@ It supports these scenarios:
 - [Proxy](https://docs.pirsch.io/advanced/proxy) for the Pirsch script.
 - Pirsch script is sanitized and proxy is used.
 - Automatic rendering of the tracking script into a selected zone. Otherwise, manually use the `ClientSideTracking` shape in your theme's head section.
-- Server-side hit registration for [short URL redirects](..\Lombiq.Marketing.UrlShortener\Readme.md).
+- Server-side hit registration for [short URL redirects](https://github.com/Lombiq/Orchard-Marketing/tree/dev/Lombiq.Marketing.UrlShortener/Readme.md).
 - [Client Hints](https://docs.pirsch.io/get-started/client-hints) support for better tracking.
 - Admin settings with appsettings fallback.
 - Maintenance for clearing the admin-stored client secret.
