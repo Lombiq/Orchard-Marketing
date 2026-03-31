@@ -24,6 +24,7 @@ public class ShortUrlController : Controller
         _logger = logger;
     }
 
+    [Route("/jmp/{shortUrl}")]
     public async Task<IActionResult> Index(string shortUrl)
     {
         var targetUrls = await _urlShorteningService.GetTargetUrlsAsync(shortUrl);
