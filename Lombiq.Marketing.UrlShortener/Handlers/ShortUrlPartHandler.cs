@@ -1,11 +1,14 @@
-﻿using Lombiq.Marketing.UrlShortener.Indexes;
+﻿using Lombiq.Marketing.UrlShortener.Controllers;
+using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using OrchardCore.Modules;
+using OrchardCore.Mvc.Core.Utilities;
 using System;
 using System.Threading.Tasks;
 using YesSql;
@@ -53,6 +56,20 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     public override Task UpdatedAsync(UpdateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
 
     public override Task RemovedAsync(RemoveContentContext context, ShortUrlPart part) => _urlShorteningService.DeleteShortUrlAsync(part.ContentItem);
+
+    public override Task GetContentItemAspectAsync(ContentItemAspectContext context, ShortUrlPart part) =>
+        context.ForAsync<ContentItemMetadata>(contentItemMetadata =>
+        {
+            contentItemMetadata.DisplayRouteValues = new RouteValueDictionary
+            {
+                { "Area", "Lombiq.Marketing.UrlShortener" },
+                { "Controller", typeof(ShortUrlController).ControllerName() },
+                { "Action", nameof(ShortUrlController.Index) },
+                { "ShortUrl", part.ShortUrl.Text },
+            };
+
+            return Task.CompletedTask;
+        });
 
     private async Task UpdateShortUrlAsync(ShortUrlPart part)
     {
