@@ -6,6 +6,7 @@ using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Navigation;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Autoroute.Models;
 using OrchardCore.ContentManagement;
 using OrchardCore.Data;
 using OrchardCore.Modules;
@@ -22,6 +23,8 @@ public sealed class Startup : StartupBase
         services.AddContentPart<ShortUrlPart>()
             .AddHandler<ShortUrlPartHandler>()
             .WithMigration<ShortUrlMigration>();
+
+        services.AddContentPart<AutoroutePart>().AddHandler<AutoroutePartHandler>();
 
         services.AddIndexProvider<ShortUrlPartIndexProvider>();
 

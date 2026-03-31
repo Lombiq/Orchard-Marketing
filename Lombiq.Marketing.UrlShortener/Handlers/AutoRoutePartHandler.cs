@@ -1,0 +1,142 @@
+﻿using Lombiq.Marketing.UrlShortener.Controllers;
+using Lombiq.Marketing.UrlShortener.Indexes;
+using Lombiq.Marketing.UrlShortener.Models;
+using Lombiq.Marketing.UrlShortener.Services;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Caching.Memory;
+using OrchardCore.Autoroute.Models;
+using OrchardCore.ContentManagement;
+using OrchardCore.ContentManagement.Handlers;
+using OrchardCore.DisplayManagement.ModelBinding;
+using OrchardCore.Modules;
+using OrchardCore.Mvc.Core.Utilities;
+using System;
+using System.Threading.Tasks;
+using YesSql;
+
+namespace Lombiq.Marketing.UrlShortener.Handlers;
+
+public class AutoroutePartHandler : ContentPartHandler<AutoroutePart>
+{
+    private readonly IUrlShorteningService _urlShorteningService;
+    private readonly IUpdateModelAccessor _updateModelAccessor;
+    private readonly ISession _session;
+    private readonly IMemoryCache _memoryCache;
+    private readonly IClock _clock;
+
+
+    public AutoroutePartHandler(
+        IUrlShorteningService urlShorteningService,
+        IUpdateModelAccessor updateModelAccessor,
+        IMemoryCache memoryCache,
+        ISession session,
+        IClock clock)
+    {
+        _urlShorteningService = urlShorteningService;
+        _updateModelAccessor = updateModelAccessor;
+        _memoryCache = memoryCache;
+        _session = session;
+        _clock = clock;
+    }
+
+    public override async Task InitializingAsync(InitializingContentContext context, AutoroutePart part)
+    {
+        part.Path = await GenerateRandomShortUrlAsync();
+        part.ContentItem.Apply(part);
+    }
+
+    public override Task RemovedAsync(RemoveContentContext context, AutoroutePart part) =>
+        _urlShorteningService.DeleteShortUrlAsync(part.ContentItem);
+
+    public override Task GetContentItemAspectAsync(ContentItemAspectContext context, AutoroutePart part) =>
+        context.ForAsync<ContentItemMetadata>(contentItemMetadata =>
+        {
+            contentItemMetadata.DisplayRouteValues = new RouteValueDictionary
+            {
+                { "Area", "Lombiq.Marketing.UrlShortener" },
+                { "Controller", typeof(ShortUrlController).ControllerName() },
+                { "Action", nameof(ShortUrlController.Index) },
+                { "ShortUrl", part.Path },
+            };
+
+            return Task.CompletedTask;
+        });
+
+    private async Task UpdateShortUrlAsync(ShortUrlPart part)
+    {
+        if (string.IsNullOrEmpty(part.ShortUrl.Text))
+        {
+            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+                nameof(ShortUrlPart.ShortUrl),
+                "The short URL is required.");
+        }
+
+        if (string.IsNullOrEmpty(part.DestinationUrl.Text))
+        {
+            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+                nameof(ShortUrlPart.DestinationUrl),
+                "The destination URL is required.");
+        }
+
+        if (!Uri.IsWellFormedUriString(part.ShortUrl.Text, UriKind.Relative) || !part.ShortUrl.Text.StartsWith('/'))
+        {
+            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+                nameof(ShortUrlPart.ShortUrl),
+                "The short URL must be a valid relative URL (for example: /short-url).");
+        }
+
+        if (!Uri.TryCreate(part.DestinationUrl.Text, UriKind.RelativeOrAbsolute, out var destinationUri))
+        {
+            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+                nameof(ShortUrlPart.DestinationUrl),
+                "The destination URL must be a valid URL.");
+        }
+
+        if (destinationUri != null && !destinationUri.IsAbsoluteUri && !destinationUri.OriginalString.StartsWith('/'))
+        {
+            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+                nameof(ShortUrlPart.DestinationUrl),
+                "The destination URL must be an absolute URL or a relative URL starting with '/'.");
+        }
+
+        if (!_updateModelAccessor.ModelUpdater.ModelState.IsValid)
+        {
+            return;
+        }
+
+        // if (!await _urlShorteningService.UpdateShortUrlAsync(_previousShortUrlPart?.ShortUrl.Text, part))
+        // {
+        //     _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+        //         nameof(ShortUrlPart.ShortUrl),
+        //         "The short URL must be unique. The provided short URL is already in use.");
+        // }
+
+        if (string.IsNullOrEmpty(part.ContentItem.DisplayText))
+        {
+            part.ContentItem.DisplayText = part.ShortUrl.Text;
+        }
+
+        // _previousShortUrlPart = part;
+    }
+
+    private async Task<string> GenerateRandomShortUrlAsync()
+    {
+        var isUnique = false;
+        var randomShortUrl = string.Empty;
+        while (!isUnique)
+        {
+            var sourceString = $"{_clock.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
+
+            randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
+
+            if (!_memoryCache.TryGetValue($"/{randomShortUrl}", out _))
+            {
+                var url = randomShortUrl;
+                isUnique = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == $"/{url}")
+                    .FirstOrDefaultAsync()) == null;
+            }
+        }
+
+        return $"/{randomShortUrl}";
+    }
+}
