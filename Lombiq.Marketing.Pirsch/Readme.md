@@ -45,13 +45,17 @@ Example appsettings or environment variable configuration:
                 "ClearClientSecretsMaintenance": {
                  "IsEnabled": true
                 },
-                // The client-side tracking snippet to inject into the theme. You can also set this from the admin. This will be also sanitized before rendering.
-                "ClientSideTrackingSnippet": "<script defer src=\"https://api.pirsch.io/pa.js\" id=\"pianjs\" data-code=\"CuvrMvtROyq2u4D5gCFIwCk6qrYnMJlN\" data-dev=\"test\"></script>",
-                // The data-dev attribute value to use in the client-side tracking snippet, if not set in the snippet itself.
+                // The client-side tracking snippet to inject into the theme. You can also set this from the admin. This
+                // will be also sanitized before rendering. You can get this on your Pirsch dashboard under "Settings/Integration".
+                "ClientSideCodeSnippet": "<script defer src=\"https://api.pirsch.io/pa.js\" id=\"pianjs\" data-code=\"CuvrMvtROyq2u4D5gCFIwCk6qrYnMJlN\" data-dev=\"test\"></script>",
+                // The data-dev attribute value to use in the client-side tracking snippet, if not set in the snippet 
+                // itself. More info: https://docs.pirsch.io/get-started/frontend-integration#testing-pirsch-locally
                 "DataDev": "dev-url.com",
                 // The zone where the client-side tracking snippet should be automatically rendered.
                 "AutoRenderZone": "Head",
-                // The Pirsch API client secret. We do not recommend setting this from appsettings for security reasons, but you can do it for testing or if you have a secure way to store secrets in your hosting environment.
+                // The Pirsch API client secret. We do not recommend setting this from appsettings for security reasons,
+                // but you can do it for testing or if you have a secure way to store secrets in your hosting environment.
+                // You can get this on your Pirsch dashboard under "Settings/Integration".
                 "ClientSecret": "your-client-secret"                
             }
         }
