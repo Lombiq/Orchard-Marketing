@@ -103,6 +103,11 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
                 "The short URL must be unique. The provided short URL is already in use.");
         }
 
+        if (string.IsNullOrEmpty(part.ContentItem.DisplayText))
+        {
+            part.ContentItem.DisplayText = part.ShortUrl.Text;
+        }
+
         _previousShortUrlPart = part;
     }
 
