@@ -44,6 +44,8 @@ public sealed class Startup : StartupBase
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
         services.AddPermissionProvider<PirschSettingsPermissions>();
         services.AddNavigationProvider<PirschSettingsAdminMenu>();
+
+        services.AddContentSecurityPolicyProvider<PirschSecurityPolicyProvider>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
