@@ -1,4 +1,4 @@
-﻿using Lombiq.Marketing.UrlShortener.Events;
+using Lombiq.Marketing.UrlShortener.Events;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -54,9 +54,9 @@ public class ShortUrlController : Controller
                 return NotFound();
             }
         }
-        catch (Exception e)
+        catch (Exception e) when (!e.IsFatal())
         {
-            _logger.LogError(e, "An error occurred while processing the short URL redirectEventHandlers for '{ShortUrl}'", shortUrl);
+            _logger.LogError(e, "An error occurred while processing the short URL redirectEventHandlers for '{ShortUrl}'.", shortUrl);
         }
 
         // We don't want this redirect to be cached by browsers, so we have full control over changes in the target URL.
