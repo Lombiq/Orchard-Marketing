@@ -20,8 +20,8 @@ public static class TestCaseUITestContextExtensions
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
         const string title = "Marketing Short URL Test";
-        const string shortUrl = "/marketing-short-url";
-        const string updatedShortUrl = "/marketing-short-url-updated";
+        const string shortUrl = "/jmp/marketing-short-url";
+        const string updatedShortUrl = "/jmp/marketing-short-url-updated";
 
         await context.SignInDirectlyAndGoToDashboardAsync();
 
