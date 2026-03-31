@@ -22,7 +22,7 @@ The module also contains extension points that other modules can use when a shor
 
 To use the module, follow these steps:
 
-- Enable the `Lombiq.Marketing.UrlShortener` feature from the admin.
-- Open `Tools -> Short URLs`.
-- Create a new short URL content item.
-- Set the short URL, destination URL, and optional UTM values.
+1. Enable the `Lombiq.Marketing.UrlShortener` feature from the admin.
+2. Open `Tools -> Short URLs`.
+3. Create a new short URL content item.
+4. Set the short URL, destination URL, and optional UTM values.
