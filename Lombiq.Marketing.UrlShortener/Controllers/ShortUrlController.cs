@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.UrlShortener.Controllers;
 
+[Route("jmp/")]
 public class ShortUrlController : Controller
 {
     private readonly IUrlShorteningService _urlShorteningService;
@@ -24,10 +25,10 @@ public class ShortUrlController : Controller
         _logger = logger;
     }
 
-    [Route("/jmp/{shortUrl}")]
+    [Route("{shortUrl}")]
     public async Task<IActionResult> Index(string shortUrl)
     {
-        var targetUrls = await _urlShorteningService.GetTargetUrlsAsync(shortUrl);
+        var targetUrls = await _urlShorteningService.GetTargetUrlsAsync("/jmp/" + shortUrl);
         if (targetUrls is null)
         {
             return NotFound();

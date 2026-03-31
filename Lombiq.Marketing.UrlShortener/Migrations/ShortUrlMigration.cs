@@ -1,7 +1,6 @@
 using Lombiq.Marketing.UrlShortener.Constants;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
-using OrchardCore.Autoroute.Models;
 using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentFields.Settings;
 using OrchardCore.ContentManagement.Metadata;
@@ -71,7 +70,8 @@ public sealed class ShortUrlMigration : DataMigration
                 .WithSettings(new TextFieldSettings
                 {
                     Required = true,
-                    Hint = "The short URL can only be a unique relative URL (for example: /short-url).",
+                    Hint = "The short URL can only be a unique relative URL (for example: /jmp/short-url). /jmp prefix " +
+                        "will be automatically added if not included.",
                 }))
             .WithField(nameof(ShortUrlPart.DestinationUrl), field => field
                 .OfType(nameof(TextField))
@@ -87,11 +87,6 @@ public sealed class ShortUrlMigration : DataMigration
             .Creatable()
             .Listable()
             .WithPart<TitlePart>()
-            .WithPart<AutoroutePart>(part => part.WithSettings(new AutoroutePartSettings
-            {
-                AllowCustomPath = true,
-                AllowUpdatePath = true,
-            }))
             .WithPart<ShortUrlPart>()
             .WithPart<UtmPart>());
 

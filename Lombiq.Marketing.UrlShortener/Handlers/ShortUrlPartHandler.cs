@@ -12,6 +12,7 @@ using OrchardCore.Mvc.Core.Utilities;
 using System;
 using System.Threading.Tasks;
 using YesSql;
+using StringExtensions = OrchardCore.Modules.StringExtensions;
 
 namespace Lombiq.Marketing.UrlShortener.Handlers;
 
@@ -87,11 +88,11 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
                 "The destination URL is required.");
         }
 
-        if (!Uri.IsWellFormedUriString(part.ShortUrl.Text, UriKind.Relative) || !part.ShortUrl.Text.StartsWith('/'))
+        if (!Uri.IsWellFormedUriString(part.ShortUrl.Text, UriKind.Relative))
         {
             _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
                 nameof(ShortUrlPart.ShortUrl),
-                "The short URL must be a valid relative URL (for example: /short-url).");
+                "The short URL must be a valid relative URL (for example: /jmp/short-url).");
         }
 
         if (!Uri.TryCreate(part.DestinationUrl.Text, UriKind.RelativeOrAbsolute, out var destinationUri))
@@ -113,6 +114,12 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             return;
         }
 
+        if (!StringExtensions.StartsWithOrdinalIgnoreCase(part.ShortUrl.Text, "/jmp"))
+        {
+            part.ShortUrl.Text = "/jmp/" + part.ShortUrl.Text.TrimStart('/');
+            part.Apply();
+        }
+
         if (!await _urlShorteningService.UpdateShortUrlAsync(_previousShortUrlPart?.ShortUrl.Text, part))
         {
             _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
@@ -131,21 +138,21 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     private async Task<string> GenerateRandomShortUrlAsync()
     {
         var isUnique = false;
-        var randomShortUrl = string.Empty;
+        var shortUrlWithPrefix = string.Empty;
         while (!isUnique)
         {
             var sourceString = $"{_clock.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
 
-            randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
+            var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
+            shortUrlWithPrefix = $"/jmp/{randomShortUrl}";
 
-            if (!_memoryCache.TryGetValue($"/{randomShortUrl}", out _))
+            if (!_memoryCache.TryGetValue(shortUrlWithPrefix, out _))
             {
-                var url = randomShortUrl;
-                isUnique = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == $"/{url}")
+                isUnique = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == shortUrlWithPrefix)
                     .FirstOrDefaultAsync()) == null;
             }
         }
 
-        return $"/{randomShortUrl}";
+        return shortUrlWithPrefix;
     }
 }
