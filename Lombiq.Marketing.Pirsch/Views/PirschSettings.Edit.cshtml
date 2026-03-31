@@ -35,7 +35,7 @@
     <input asp-for="ClientSecret" class="form-control" type="password" autocomplete="new-password" placeholder="@placeholder" />
     <span asp-validation-for="ClientSecret"></span>
     <span class="hint">
-        @T["Only Access Key type client is supported. Get it from your website's Pirsch dashboard under Settings → Integration → Clients to configure access to only a single site; use your account menu → Account → Clients to all your sites. Leave this empty to keep the existing secret."]
+        @T["Only Access Key type client is supported. Get it from your website's Pirsch dashboard under Settings → Integration → Clients to configure access to only a single site; use your account menu → Account → Clients to access all your sites. Leave this empty to keep the existing secret."]
     </span>
 
     @if (Model.HasClientSecret)
