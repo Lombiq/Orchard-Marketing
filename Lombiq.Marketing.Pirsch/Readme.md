@@ -1,4 +1,4 @@
-# Lombiq Marketing - Pirsch for Orchard Core
+# Lombiq Marketing - Pirsch analytics for Orchard Core
 
 [![Lombiq.Marketing.Pirsch NuGet](https://img.shields.io/nuget/v/Lombiq.Marketing.Pirsch?label=Lombiq.Marketing.Pirsch)](https://www.nuget.org/packages/Lombiq.Marketing.Pirsch/)
 
