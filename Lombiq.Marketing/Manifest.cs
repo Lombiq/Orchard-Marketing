@@ -5,7 +5,7 @@ using OrchardCore.Modules.Manifest;
     Name = "Lombiq Marketing",
     Author = "Lombiq Technologies",
     Version = "0.0.1",
-    Description = "",
+    Description = "Contains the common abstractions and services used by the other marketing modules",
     Website = "https://github.com/Lombiq/Orchard-Marketing"
 )]
 
@@ -13,7 +13,7 @@ using OrchardCore.Modules.Manifest;
     Id = FeatureIds.Base,
     Name = "Lombiq Marketing",
     Category = "Marketing",
-    Description = "",
+    Description = "Contains the common abstractions and services used by the other marketing modules",
     Dependencies =
     [
         Lombiq.Marketing.UrlShortener.Constants.FeatureIds.Base,
