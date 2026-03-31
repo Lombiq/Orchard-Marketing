@@ -13,6 +13,8 @@ public static class PirschSettingsSanitizer
 {
     private static readonly PirschScriptMarkupFormatter _formatter = new();
 
+    // These are all the possible attributes from https://dashboard.pirsch.io/settings/integration, if you select all
+    // the options under Snippet Show Advanced Options.
     private static readonly HashSet<string> _allowedAttributeNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "defer",
