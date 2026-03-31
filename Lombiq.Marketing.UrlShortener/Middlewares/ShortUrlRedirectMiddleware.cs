@@ -2,6 +2,8 @@ using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Marketing.UrlShortener.Events;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,8 +12,13 @@ namespace Lombiq.Marketing.UrlShortener.Middlewares;
 public sealed class ShortUrlRedirectMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ShortUrlRedirectMiddleware> _logger;
 
-    public ShortUrlRedirectMiddleware(RequestDelegate next) => _next = next;
+    public ShortUrlRedirectMiddleware(RequestDelegate next, ILogger<ShortUrlRedirectMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
 
     public async Task InvokeAsync(
         HttpContext context,
@@ -46,15 +53,22 @@ public sealed class ShortUrlRedirectMiddleware
             TrackingUrlWithUtmParameters = targetUrls.TrackingUrlWithUtmParameters,
         };
 
-        foreach (var redirectEventHandler in redirectEventHandlers)
+        try
         {
-            await redirectEventHandler.RedirectingAsync(redirectContext);
-        }
+            foreach (var redirectEventHandler in redirectEventHandlers)
+            {
+                await redirectEventHandler.RedirectingAsync(redirectContext);
+            }
 
-        if (redirectContext.Cancel)
+            if (redirectContext.Cancel)
+            {
+                await _next(context);
+                return;
+            }
+        }
+        catch (Exception e)
         {
-            await _next(context);
-            return;
+            _logger.LogError(e, "An error occurred while processing the short URL redirectEventHandlers for '{ShortUrl}'", shortUrl);
         }
 
         // We don't want this redirect to be cached by browsers, so we have full control over changes in the target URL.
