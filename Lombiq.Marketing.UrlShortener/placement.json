@@ -9,5 +9,11 @@
       "differentiator": "ShortUrl-UtmPart",
       "place": "Content:0#UTM Parameters;0"
     }
+  ],
+  "ContentPreview_Button": [
+    {
+      "contentType": [ "ShortUrl" ],
+      "place": "-"
+    }
   ]
 }
