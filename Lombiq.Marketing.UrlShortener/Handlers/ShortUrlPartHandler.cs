@@ -66,7 +66,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
                 { "Area", "Lombiq.Marketing.UrlShortener" },
                 { "Controller", typeof(ShortUrlController).ControllerName() },
                 { "Action", nameof(ShortUrlController.Index) },
-                { "ShortUrl", part.ShortUrl.Text },
+                { "ShortUrl", part.ShortUrl.Text["/jmp/".Length..] },
             };
 
             return Task.CompletedTask;
