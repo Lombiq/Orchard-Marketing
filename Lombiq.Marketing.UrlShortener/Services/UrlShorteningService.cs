@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Records;
+using OrchardCore.Environment.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,13 @@ public class UrlShorteningService : IUrlShorteningService
 
     private readonly ISession _session;
     private readonly IMemoryCache _memoryCache;
+    private readonly ISignal _signal;
 
-    public UrlShorteningService(ISession session, IMemoryCache memoryCache)
+    public UrlShorteningService(ISession session, IMemoryCache memoryCache, ISignal signal)
     {
         _session = session;
         _memoryCache = memoryCache;
+        _signal = signal;
     }
 
     public async Task<ShortUrlTargetUrls?> GetTargetUrlsAsync(string shortUrl)
@@ -75,21 +78,20 @@ public class UrlShorteningService : IUrlShorteningService
             return false;
         }
 
-        SetCache(shortUrlPart);
+        await InvalidateShortUrlCacheAsync(shortUrlPart.ShortUrl.Text);
 
         if (!string.IsNullOrEmpty(previousShortUrl) && shortUrlPart.ShortUrl.Text != previousShortUrl)
         {
-            RemoveCache(previousShortUrl);
+            await InvalidateShortUrlCacheAsync(previousShortUrl);
         }
+
+        SetCache(shortUrlPart);
 
         return true;
     }
 
-    public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem)
-    {
-        RemoveCache(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text);
-        return Task.CompletedTask;
-    }
+    public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem) =>
+        InvalidateShortUrlCacheAsync(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text);
 
     private ShortUrlTargetUrls SetCache(ContentItem shortUrlContentItem) =>
         SetCache(shortUrlContentItem.As<ShortUrlPart>());
@@ -97,13 +99,13 @@ public class UrlShorteningService : IUrlShorteningService
     private ShortUrlTargetUrls SetCache(ShortUrlPart shortUrlPart)
     {
         var targetUrls = BuildTargetUrls(shortUrlPart.ContentItem);
-        _memoryCache.Set(GetCacheKey(shortUrlPart.ShortUrl.Text), targetUrls);
+        var cacheKey = GetCacheKey(shortUrlPart.ShortUrl.Text);
+        _memoryCache.Set(cacheKey, targetUrls, _signal.GetToken(cacheKey));
 
         return targetUrls;
     }
 
-    private void RemoveCache(string shortUrl) =>
-        _memoryCache.Remove(GetCacheKey(shortUrl));
+    private Task InvalidateShortUrlCacheAsync(string shortUrl) => _signal.SignalTokenAsync(GetCacheKey(shortUrl));
 
     private static ShortUrlTargetUrls BuildTargetUrls(ContentItem shortUrlContentItem)
     {
