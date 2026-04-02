@@ -2,6 +2,7 @@ using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -33,16 +34,49 @@ public sealed class PirschApiClient : IPirschApiClient
         _logger = logger;
     }
 
-    public Task<bool> SendHitAsync(PirschHitRequest request, CancellationToken cancellationToken = default) =>
+    public async Task<bool> SendHitAsync(PirschHitRequest request, CancellationToken cancellationToken = default)
+    {
+        using var responseMessage = await SendHitResponseAsync(request, cancellationToken);
+        return responseMessage.IsSuccessStatusCode;
+    }
+
+    public Task<HttpResponseMessage> SendHitResponseAsync(
+        PirschHitRequest request,
+        CancellationToken cancellationToken = default) =>
         SendAsync(PirschApiConstants.HitEndpointPath, request, cancellationToken);
 
-    private async Task<bool> SendAsync<TRequest>(string requestUri, TRequest request, CancellationToken cancellationToken)
+    public async Task<bool> SendEventAsync(PirschEventRequest request, CancellationToken cancellationToken = default)
+    {
+        using var responseMessage = await SendEventResponseAsync(request, cancellationToken);
+        return responseMessage.IsSuccessStatusCode;
+    }
+
+    public Task<HttpResponseMessage> SendEventResponseAsync(
+        PirschEventRequest request,
+        CancellationToken cancellationToken = default) =>
+        SendAsync(PirschApiConstants.EventEndpointPath, request, cancellationToken);
+
+    public async Task<bool> KeepSessionAliveAsync(PirschSessionRequest request, CancellationToken cancellationToken = default)
+    {
+        using var responseMessage = await KeepSessionAliveResponseAsync(request, cancellationToken);
+        return responseMessage.IsSuccessStatusCode;
+    }
+
+    public Task<HttpResponseMessage> KeepSessionAliveResponseAsync(
+        PirschSessionRequest request,
+        CancellationToken cancellationToken = default) =>
+        SendAsync(PirschApiConstants.SessionEndpointPath, request, cancellationToken);
+
+    private async Task<HttpResponseMessage> SendAsync<TRequest>(
+        string requestUri,
+        TRequest request,
+        CancellationToken cancellationToken)
     {
         var accessKey = _pirschSettingsOptions.Value.ClientSecret;
         if (string.IsNullOrWhiteSpace(accessKey))
         {
-            _logger.LogError("Cannot send a request to Pirsch API because the client secret is not configured.");
-            return false;
+            _logger.LogError("Cannot send a request to Pirsch API because the client secret is not configured");
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -51,19 +85,12 @@ public sealed class PirschApiClient : IPirschApiClient
 
         try
         {
-            using var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
-            responseMessage.EnsureSuccessStatusCode();
-
-            _logger.LogInformation(
-                "Successfully sent a request to Pirsch API. Request URI: {RequestUri}.",
-                requestUri);
+            return await _httpClient.SendAsync(requestMessage, cancellationToken);
         }
         catch (HttpRequestException httpRequestException)
         {
-            _logger.LogError(httpRequestException, "There was a problem sending the request to the Pirsch API.");
-            return false;
+            _logger.LogError(httpRequestException, "There was a problem sending the request to the Pirsch API");
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
-
-        return true;
     }
 }
