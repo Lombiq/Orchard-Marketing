@@ -62,11 +62,10 @@ public static class PirschSettingsSanitizer
 
         foreach (var attributeName in removeAttributes) script.RemoveAttribute(attributeName);
 
-        if (!script.GetAttribute("src")?.EqualsOrdinalIgnoreCase(PirschProxyConstants.ProxyScriptPath) == true)
-        {
-            script.SetAttribute("src", PirschProxyConstants.ProxyScriptPath);
-        }
-
+        SetProxyAttribute(script, "src", PirschProxyConstants.ProxyScriptPath);
+        SetProxyAttribute(script, "data-hit-endpoint", PirschProxyConstants.ProxyPageViewPath);
+        SetProxyAttribute(script, "data-event-endpoint", PirschProxyConstants.ProxyEventPath);
+        SetProxyAttribute(script, "data-session-endpoint", PirschProxyConstants.ProxySessionPath);
         script.TextContent = string.Empty;
 
         return SerializeScript(script);
@@ -78,6 +77,14 @@ public static class PirschSettingsSanitizer
         script.ToHtml(stringWriter, _formatter);
 
         return stringWriter.ToString();
+    }
+
+    private static void SetProxyAttribute(IElement script, string attributeName, string attributeValue)
+    {
+        if (script.GetAttribute(attributeName)?.EqualsOrdinalIgnoreCase(attributeValue) != true)
+        {
+            script.SetAttribute(attributeName, attributeValue);
+        }
     }
 
     private sealed class PirschScriptMarkupFormatter : HtmlMarkupFormatter
