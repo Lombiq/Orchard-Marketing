@@ -14,8 +14,6 @@ namespace Lombiq.Marketing.Tests.UI.Extensions;
 public static class TestCaseUITestContextExtensions
 {
     private const string TestPirschScript = "<script defer=\"\" id=\"pianjs\" data-code=\"test\" data-dev=\"test\"></script>";
-    private static string UpdatedTestPirschScript(string id, string dataDev) =>
-        $"<script defer=\"\" id=\"{id}\" data-code=\"test\" data-dev=\"{dataDev}\"></script>";
 
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
@@ -85,8 +83,7 @@ public static class TestCaseUITestContextExtensions
 
     public static async Task TestPirschClientSideTrackingAutomaticInjectionAsync(this UITestContext context)
     {
-        var pageSource = context.Driver.PageSource;
-        pageSource.ContainsOrdinalIgnoreCase(TestPirschScript).ShouldBeTrue();
+        AssertPirschSnippet(context.Driver.PageSource, "pianjs", "test");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
 
@@ -97,15 +94,13 @@ public static class TestCaseUITestContextExtensions
 
         await context.ClickAndFillInWithRetriesAsync(
             By.Id("ISite_PirschSettings_ClientSideCodeSnippet"),
-            UpdatedTestPirschScript("pianjsUpdated", string.Empty));
+            "<script defer=\"\" id=\"pianjs\" data-code=\"test\"></script>");
         await context.ClickReliablyOnSubmitAsync();
         context.ShouldBeSuccess();
 
         await context.GoToHomePageAsync();
 
-        context.Driver.PageSource
-            .ContainsOrdinalIgnoreCase(UpdatedTestPirschScript("pianjsUpdated", "open-source-orchard-core-extensions.com"))
-            .ShouldBeTrue();
+        AssertPirschSnippet(context.Driver.PageSource, "pianjs", "open-source-orchard-core-extensions.com");
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
@@ -114,10 +109,17 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToHomePageAsync();
 
-        context.Driver.PageSource.ContainsOrdinalIgnoreCase(UpdatedTestPirschScript("pianjsUpdated", "newDataDev")).ShouldBeTrue();
+        AssertPirschSnippet(context.Driver.PageSource, "pianjs", "newDataDev");
     }
 
-    public static void SetPirschClientTrackerConfiguration(this OrchardCoreUITestExecutorConfiguration configuration) =>
+    public static void SetPirschClientTrackerConfiguration(this OrchardCoreUITestExecutorConfiguration configuration)
+    {
+        configuration.AssertAppLogsAsync = app =>
+            app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
+
+        configuration.ResponseLogFilter = e =>
+            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/secret-sauce/pv", 404);
+
         configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
             {
@@ -128,13 +130,16 @@ public static class TestCaseUITestContextExtensions
 
                 return Task.CompletedTask;
             };
+    }
 
     public static void SetShortUrlConfiguration(this OrchardCoreUITestExecutorConfiguration configuration)
     {
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.ResponseLogFilter = e => e.IsNonSuccessResponseAndNotExpectedStatusResponse("/marketing-short-url", 404);
+        configuration.ResponseLogFilter = e =>
+            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url", 404) &&
+            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url-updated", 404);
     }
 
     private static bool IsUnexpectedAppLog(IApplicationLogEntry logEntry) =>
@@ -153,4 +158,18 @@ public static class TestCaseUITestContextExtensions
         context.ClickAndFillInWithRetriesAsync(
             By.Id(id),
             value);
+
+    private static void AssertPirschSnippet(
+        string pageSource,
+        string id,
+        string dataDev)
+    {
+        pageSource.ContainsOrdinalIgnoreCase($"id=\"{id}\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase("src=\"/secret-sauce/sauce.js\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase("data-hit-endpoint=\"/secret-sauce/pv\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase("data-event-endpoint=\"/secret-sauce/e\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase("data-session-endpoint=\"/secret-sauce/s\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase("data-code=\"test\"").ShouldBeTrue();
+        pageSource.ContainsOrdinalIgnoreCase($"data-dev=\"{dataDev}\"").ShouldBeTrue();
+    }
 }
