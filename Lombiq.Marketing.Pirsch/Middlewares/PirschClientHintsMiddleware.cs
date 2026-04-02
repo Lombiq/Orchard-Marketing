@@ -1,5 +1,4 @@
 using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
-using Lombiq.Marketing.Pirsch.Constants;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
@@ -23,7 +22,7 @@ public sealed class PirschClientHintsMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.IsAdminUrl() || context.Request.Path.StartsWithSegments(PirschProxyConstants.ProxyPathPrefix))
+        if (context.IsAdminUrl())
         {
             await _next(context);
             return;
