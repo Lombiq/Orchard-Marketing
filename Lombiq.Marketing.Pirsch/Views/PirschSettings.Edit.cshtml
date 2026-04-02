@@ -8,7 +8,7 @@
     <textarea asp-for="ClientSideCodeSnippet" class="form-control font-monospace" rows="14" spellcheck="false"></textarea>
     <span asp-validation-for="ClientSideCodeSnippet"></span>
     <span class="hint">
-        @T["Paste the script snippet from your website's Pirsch dashboard under Settings → Integration. On save only the supported script tag and attributes are kept, and the src is rewritten to the proxy URL."]
+        @T["Paste the script snippet from your website's Pirsch dashboard under Settings → Integration. On save only the supported script tag and attributes are kept. The src, data-hit-endpoint, data-event-endpoint and data-session-endpoint are rewritten to the proxy URL."]
     </span>
 </fieldset>
 
