@@ -21,7 +21,7 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
 
     public async Task HandleHitAsync(ShortUrlHitContext context)
     {
-        var success = await _pirschApiClient.SendHitAsync(
+        var response = await _pirschApiClient.SendHitResponseAsync(
             new PirschHitRequest
             {
                 Url = context.TrackingUrlWithUtmParameters,
@@ -39,17 +39,19 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
             },
             context.CancellationToken);
 
-        if (!success)
+        if (response.IsSuccessStatusCode)
         {
-            _logger.LogError(
-                "Failed to send a hit to Pirsch API for the tracked target URL: {Url}. Check logs for more info.",
+            _logger.LogInformation(
+                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}",
                 context.TrackingUrlWithUtmParameters);
         }
         else
         {
-            _logger.LogInformation(
-                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}.",
-                context.TrackingUrlWithUtmParameters);
+            var responseContent = await response.Content.ReadAsStringAsync(context.CancellationToken);
+            _logger.LogError(
+                "Failed to send a hit to Pirsch API for the tracked target URL: {Url}. Response: {ResponseContent}",
+                context.TrackingUrlWithUtmParameters,
+                responseContent);
         }
     }
 }
