@@ -3,6 +3,7 @@ using Lombiq.Marketing.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Filters;
@@ -32,18 +33,17 @@ public sealed class ClientSideTrackingInjectingFilter : IAsyncResultFilter
         }
 
         var viewModels = await _clientSideTrackingMarkupService.GetViewModelsAsync();
-        if (viewModels != null)
-        {
-            foreach (var viewModel in viewModels)
-            {
-                if (string.IsNullOrWhiteSpace(viewModel.Html) || string.IsNullOrWhiteSpace(viewModel.Zone))
-                {
-                    continue;
-                }
+        var renderViewModels = viewModels?.Where(viewModel =>
+            !string.IsNullOrWhiteSpace(viewModel.Html) &&
+            !string.IsNullOrWhiteSpace(viewModel.Zone));
 
+        if (renderViewModels != null)
+        {
+            foreach (var viewModel in renderViewModels)
+            {
                 await _layoutAccessor.AddShapeToZoneAsync(
                     viewModel.Zone,
-                    await _shapeFactory.CreateAsync("ClientSideTracking", model: viewModel));
+                    await _shapeFactory.CreateAsync("ZoneClientSideTracking", new { ViewModel = viewModel }));
             }
         }
 
