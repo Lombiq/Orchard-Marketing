@@ -1,4 +1,4 @@
-﻿using Lombiq.Marketing.Pirsch.Constants;
+using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -81,7 +81,7 @@ public class PirschProxyService : IPirschProxyService
         {
             _logger.LogError(
                 exception,
-                "Failed to proxy the Pirsch script request for path {RequestPath}",
+                "Failed to proxy the Pirsch script request for path {RequestPath}.",
                 _hca.HttpContext.Request.Path);
 
             _hca.HttpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
@@ -115,7 +115,7 @@ public class PirschProxyService : IPirschProxyService
         {
             _logger.LogError(
                 exception,
-                "Failed to proxy the Pirsch request for path {RequestPath}",
+                "Failed to proxy the Pirsch request for path {RequestPath}.",
                 context.Request.Path);
 
             context.Response.StatusCode = StatusCodes.Status502BadGateway;

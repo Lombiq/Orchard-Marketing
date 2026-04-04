@@ -42,7 +42,7 @@ public sealed class PirschShortUrlHitHandler : IShortUrlHitHandler
         if (response.IsSuccessStatusCode)
         {
             _logger.LogInformation(
-                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}",
+                "Successfully sent a hit to Pirsch API for the tracked target URL: {Url}.",
                 context.TrackingUrlWithUtmParameters);
         }
         else
