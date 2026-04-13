@@ -1,9 +1,7 @@
 ﻿using Lombiq.Marketing.UrlShortener.Controllers;
-using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Caching.Memory;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
@@ -11,7 +9,6 @@ using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using System;
 using System.Threading.Tasks;
-using YesSql;
 using StringExtensions = OrchardCore.Modules.StringExtensions;
 
 namespace Lombiq.Marketing.UrlShortener.Handlers;
@@ -20,8 +17,6 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 {
     private readonly IUrlShorteningService _urlShorteningService;
     private readonly IUpdateModelAccessor _updateModelAccessor;
-    private readonly ISession _session;
-    private readonly IMemoryCache _memoryCache;
     private readonly IClock _clock;
 
     private ShortUrlPart? _previousShortUrlPart;
@@ -29,14 +24,10 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     public ShortUrlPartHandler(
         IUrlShorteningService urlShorteningService,
         IUpdateModelAccessor updateModelAccessor,
-        IMemoryCache memoryCache,
-        ISession session,
         IClock clock)
     {
         _urlShorteningService = urlShorteningService;
         _updateModelAccessor = updateModelAccessor;
-        _memoryCache = memoryCache;
-        _session = session;
         _clock = clock;
     }
 
@@ -146,11 +137,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
             shortUrlWithPrefix = $"/jmp/{randomShortUrl}";
 
-            if (!_memoryCache.TryGetValue(shortUrlWithPrefix, out _))
-            {
-                isUnique = (await _session.QueryIndex<ShortUrlPartIndex>(index => index.ShortUrl == shortUrlWithPrefix)
-                    .FirstOrDefaultAsync()) == null;
-            }
+            isUnique = await _urlShorteningService.IsShortUrlUniqueAsync(shortUrlWithPrefix);
         }
 
         return shortUrlWithPrefix;
