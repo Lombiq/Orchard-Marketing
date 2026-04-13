@@ -17,11 +17,13 @@ public interface IUrlShorteningService
     Task<ShortUrlTargetUrls?> GetTargetUrlsAsync(string shortUrl);
 
     /// <summary>
-    /// Checks whether the short URL value of the supplied part is unique.
+    /// Checks whether a short URL is unique among published short URL content items.
     /// </summary>
-    /// <param name="shortUrlPart">The short URL part to validate.</param>
+    /// <param name="shortUrl">The short URL path to check.</param>
+    /// <param name="contentItemId">The optional content item ID to exclude from the uniqueness check, useful for
+    /// current content item save.</param>
     /// <returns><see langword="true"/> if the short URL is unique. Otherwise <see langword="false"/>.</returns>
-    Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart);
+    Task<bool> IsShortUrlUniqueAsync(string shortUrl, string? contentItemId = null);
 
     /// <summary>
     /// Updates an existing short URL mapping.

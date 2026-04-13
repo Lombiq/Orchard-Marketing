@@ -1,3 +1,4 @@
+using Lombiq.Marketing.UrlShortener.Extensions;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -49,18 +50,24 @@ public class UrlShorteningService : IUrlShorteningService
         return cachedTargetUrls;
     }
 
-    public async Task<bool> IsShortUrlUniqueAsync(ShortUrlPart shortUrlPart)
+    public async Task<bool> IsShortUrlUniqueAsync(string shortUrl, string? contentItemId = null)
     {
-        if (_memoryCache.TryGetValue(GetCacheKey(shortUrlPart.ShortUrl.Text), out ShortUrlTargetUrls? _))
+        if (_memoryCache.TryGetValue(GetCacheKey(shortUrl), out ShortUrlTargetUrls? _))
         {
             return false;
         }
 
-        if (await _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
-            .With<ShortUrlPartIndex>(index =>
-                index.ShortUrl == shortUrlPart.ShortUrl.Text &&
-                index.ContentItemId != shortUrlPart.ContentItem.ContentItemId)
-            .FirstOrDefaultAsync() is { } existingShortUrl)
+        var query = _session.Query<ContentItem, ContentItemIndex>(index => index.Published)
+            .With<ShortUrlPartIndex>(index => index.ShortUrl == shortUrl);
+
+        if (!string.IsNullOrEmpty(contentItemId))
+        {
+            query = query.With<ShortUrlPartIndex>(index =>
+                index.ShortUrl == shortUrl &&
+                index.ContentItemId != contentItemId);
+        }
+
+        if (await query.FirstOrDefaultAsync() is { } existingShortUrl)
         {
             SetCache(existingShortUrl);
             return false;
@@ -73,7 +80,7 @@ public class UrlShorteningService : IUrlShorteningService
     {
         if (!string.IsNullOrEmpty(previousShortUrl) &&
             shortUrlPart.ShortUrl.Text != previousShortUrl &&
-            !await IsShortUrlUniqueAsync(shortUrlPart))
+            !await this.IsShortUrlUniqueAsync(shortUrlPart))
         {
             return false;
         }
