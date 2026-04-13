@@ -4,6 +4,7 @@ using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using OrchardCore;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -23,19 +24,22 @@ public class PirschProxyService : IPirschProxyService
     private readonly ILogger<PirschProxyService> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IPirschApiClient _pirschApiClient;
+    private readonly IClientIPAddressAccessor _clientIPAddressAccessor;
 
     public PirschProxyService(
         IHttpContextAccessor httpContextAccessor,
         IHttpClientFactory httpClientFactory,
         ILogger<PirschProxyService> logger,
         IMemoryCache memoryCache,
-        IPirschApiClient pirschApiClient)
+        IPirschApiClient pirschApiClient,
+        IClientIPAddressAccessor clientIPAddressAccessor)
     {
         _hca = httpContextAccessor;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
         _memoryCache = memoryCache;
         _pirschApiClient = pirschApiClient;
+        _clientIPAddressAccessor = clientIPAddressAccessor;
     }
 
     public async Task ProxyScriptAsync()
@@ -90,13 +94,13 @@ public class PirschProxyService : IPirschProxyService
     }
 
     public Task ProxyPageViewAsync() =>
-        ProxyApiRequestAsync(() => Task.FromResult(CreatePageViewRequest()), _pirschApiClient.SendHitResponseAsync);
+        ProxyApiRequestAsync(CreatePageViewRequestAsync, _pirschApiClient.SendHitResponseAsync);
 
     public Task ProxyEventAsync() =>
         ProxyApiRequestAsync(CreateEventRequestAsync, _pirschApiClient.SendEventResponseAsync);
 
     public Task ProxySessionAsync() =>
-        ProxyApiRequestAsync(() => Task.FromResult(CreateSessionRequest()), _pirschApiClient.KeepSessionAliveResponseAsync);
+        ProxyApiRequestAsync(CreateSessionRequestAsync, _pirschApiClient.KeepSessionAliveResponseAsync);
 
     private async Task ProxyApiRequestAsync<TRequest>(
         Func<Task<TRequest>> createRequestAsync,
@@ -147,12 +151,12 @@ public class PirschProxyService : IPirschProxyService
         return response.WriteAsync(content, cancellationToken);
     }
 
-    private PirschHitRequest CreatePageViewRequest()
+    private async Task<PirschHitRequest> CreatePageViewRequestAsync()
     {
         ArgumentNullException.ThrowIfNull(_hca.HttpContext);
 
         var hitRequest = new PirschHitRequest();
-        ApplyRequestData(hitRequest, includeAcceptLanguage: true);
+        await ApplyRequestDataAsync(hitRequest, includeAcceptLanguage: true);
 
         var request = _hca.HttpContext.Request;
         hitRequest.Code = request.Query["code"].ToString();
@@ -173,25 +177,25 @@ public class PirschProxyService : IPirschProxyService
             await JsonSerializer.DeserializeAsync<PirschEventRequest>(
                 _hca.HttpContext.Request.Body,
                 cancellationToken: _hca.HttpContext.RequestAborted) ?? new PirschEventRequest();
-        ApplyRequestData(eventRequest, includeAcceptLanguage: true);
+        await ApplyRequestDataAsync(eventRequest, includeAcceptLanguage: true);
 
         return eventRequest;
     }
 
-    private PirschSessionRequest CreateSessionRequest()
+    private async Task<PirschSessionRequest> CreateSessionRequestAsync()
     {
         var sessionRequest = new PirschSessionRequest();
-        ApplyRequestData(sessionRequest, includeAcceptLanguage: false);
+        await ApplyRequestDataAsync(sessionRequest, includeAcceptLanguage: false);
 
         return sessionRequest;
     }
 
-    private void ApplyRequestData(PirschRequestData requestData, bool includeAcceptLanguage)
+    private async Task ApplyRequestDataAsync(PirschRequestData requestData, bool includeAcceptLanguage)
     {
         ArgumentNullException.ThrowIfNull(_hca.HttpContext);
 
         var request = _hca.HttpContext.Request;
-        requestData.Ip = GetIp(request);
+        requestData.Ip = await GetIpAsync(request);
         requestData.UserAgent = request.Headers.UserAgent.ToString();
         requestData.SecChUa = request.Headers["Sec-CH-UA"].ToString();
         requestData.SecChUaMobile = request.Headers["Sec-CH-UA-Mobile"].ToString();
@@ -206,12 +210,12 @@ public class PirschProxyService : IPirschProxyService
         }
     }
 
-    private static string? GetIp(HttpRequest request)
+    private async Task<string?> GetIpAsync(HttpRequest request)
     {
         var cloudflareIp = request.Headers["CF-Connecting-IP"].ToString();
         return !string.IsNullOrWhiteSpace(cloudflareIp)
             ? cloudflareIp
-            : request.HttpContext.Connection.RemoteIpAddress?.ToString();
+            : (await _clientIPAddressAccessor.GetIPAddressAsync()).ToString();
     }
 
     private static int? ParseNullableInt(string value) =>
