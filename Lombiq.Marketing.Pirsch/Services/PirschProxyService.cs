@@ -215,7 +215,7 @@ public class PirschProxyService : IPirschProxyService
         var cloudflareIp = request.Headers["CF-Connecting-IP"].ToString();
         return !string.IsNullOrWhiteSpace(cloudflareIp)
             ? cloudflareIp
-            : (await _clientIPAddressAccessor.GetIPAddressAsync()).ToString();
+            : (await _clientIPAddressAccessor.GetIPAddressAsync())?.ToString() ?? string.Empty;
     }
 
     private static int? ParseNullableInt(string value) =>
