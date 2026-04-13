@@ -1,4 +1,3 @@
-using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -34,40 +33,7 @@ public sealed class PirschApiClient : IPirschApiClient
         _logger = logger;
     }
 
-    public async Task<bool> SendHitAsync(PirschHitRequest request, CancellationToken cancellationToken = default)
-    {
-        using var responseMessage = await SendHitResponseAsync(request, cancellationToken);
-        return responseMessage.IsSuccessStatusCode;
-    }
-
-    public Task<HttpResponseMessage> SendHitResponseAsync(
-        PirschHitRequest request,
-        CancellationToken cancellationToken = default) =>
-        SendAsync(PirschApiConstants.HitEndpointPath, request, cancellationToken);
-
-    public async Task<bool> SendEventAsync(PirschEventRequest request, CancellationToken cancellationToken = default)
-    {
-        using var responseMessage = await SendEventResponseAsync(request, cancellationToken);
-        return responseMessage.IsSuccessStatusCode;
-    }
-
-    public Task<HttpResponseMessage> SendEventResponseAsync(
-        PirschEventRequest request,
-        CancellationToken cancellationToken = default) =>
-        SendAsync(PirschApiConstants.EventEndpointPath, request, cancellationToken);
-
-    public async Task<bool> KeepSessionAliveAsync(PirschSessionRequest request, CancellationToken cancellationToken = default)
-    {
-        using var responseMessage = await KeepSessionAliveResponseAsync(request, cancellationToken);
-        return responseMessage.IsSuccessStatusCode;
-    }
-
-    public Task<HttpResponseMessage> KeepSessionAliveResponseAsync(
-        PirschSessionRequest request,
-        CancellationToken cancellationToken = default) =>
-        SendAsync(PirschApiConstants.SessionEndpointPath, request, cancellationToken);
-
-    private async Task<HttpResponseMessage> SendAsync<TRequest>(
+    public async Task<HttpResponseMessage> SendAsync<TRequest>(
         string requestUri,
         TRequest request,
         CancellationToken cancellationToken)
