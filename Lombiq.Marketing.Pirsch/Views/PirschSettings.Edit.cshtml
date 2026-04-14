@@ -1,0 +1,48 @@
+@model Lombiq.Marketing.Pirsch.ViewModels.PirschSettingsViewModel
+@{
+    var placeholder = Model.HasClientSecret ? T["A client secret is already configured."].Value : string.Empty;
+}
+
+<fieldset class="mb-3" asp-validation-class-for="ClientSideCodeSnippet">
+    <label class="form-label" asp-for="ClientSideCodeSnippet">@T["Client-side Code Snippet"]</label>
+    <textarea asp-for="ClientSideCodeSnippet" class="form-control font-monospace" rows="14" spellcheck="false"></textarea>
+    <span asp-validation-for="ClientSideCodeSnippet"></span>
+    <span class="hint">
+        @T["Paste the script snippet from your website's Pirsch dashboard under Settings → Integration. On save only the supported script tag and attributes are kept. The src, data-hit-endpoint, data-event-endpoint and data-session-endpoint are rewritten to the proxy URL."]
+    </span>
+</fieldset>
+
+<fieldset class="mb-3" asp-validation-class-for="DataDev">
+    <label class="form-label" asp-for="DataDev">@T["Data Dev"]</label>
+    <input asp-for="DataDev" class="form-control" />
+    <span asp-validation-for="DataDev"></span>
+    <span class="hint">
+        @T["Override for the data dev attribute in the client script. See <a href=\"https://docs.pirsch.io/get-started/frontend-integration#testing-pirsch-locally\" target=\"_blank\">the official documentation</a> about the data-dev attribute."]
+    </span>
+</fieldset>
+
+<fieldset class="mb-3" asp-validation-class-for="AutoRenderZone">
+    <label class="form-label" asp-for="AutoRenderZone">@T["Automatic Render Zone"]</label>
+    <input asp-for="AutoRenderZone" class="form-control" />
+    <span asp-validation-for="AutoRenderZone"></span>
+    <span class="hint">
+        @T["The layout zone where the client-side tracking shape should be rendered automatically."]
+    </span>
+</fieldset>
+
+<fieldset class="mb-3" asp-validation-class-for="ClientSecret">
+    <label class="form-label" asp-for="ClientSecret">@T["Client Secret"]</label>
+    <input asp-for="ClientSecret" class="form-control" type="password" autocomplete="new-password" placeholder="@placeholder" />
+    <span asp-validation-for="ClientSecret"></span>
+    <span class="hint">
+        @T["Only Access Key type client is supported. Get it from your website's Pirsch dashboard under Settings → Integration → Clients to configure access to only a single site; use your account menu → Account → Clients to access all your sites. Leave this empty to keep the existing secret."]
+    </span>
+
+    @if (Model.HasClientSecret)
+    {
+        <div class="form-check mt-2">
+            <input asp-for="ClearClientSecret" class="form-check-input" />
+            <label asp-for="ClearClientSecret" class="form-check-label">@T["Clear stored secret"]</label>
+        </div>
+    }
+</fieldset>

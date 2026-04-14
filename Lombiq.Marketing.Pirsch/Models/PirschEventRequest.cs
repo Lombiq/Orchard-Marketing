@@ -1,0 +1,25 @@
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
+namespace Lombiq.Marketing.Pirsch.Models;
+
+public sealed class PirschEventRequest : PirschRequestData
+{
+    [JsonPropertyName("code")]
+    public string? Code { get; set; }
+
+    [JsonPropertyName("event_name")]
+    public string? EventName { get; set; }
+
+    [JsonPropertyName("event_duration")]
+    public int? EventDuration { get; set; }
+
+    [JsonPropertyName("event_meta")]
+    public IDictionary<string, string>? EventMeta { get; private set; } = new Dictionary<string, string>();
+
+    [JsonPropertyName("non_interactive")]
+    public bool? NonInteractive { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+}

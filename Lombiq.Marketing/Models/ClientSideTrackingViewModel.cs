@@ -1,0 +1,8 @@
+namespace Lombiq.Marketing.Models;
+
+public sealed class ClientSideTrackingViewModel
+{
+    public string Html { get; set; } = string.Empty;
+
+    public string Zone { get; set; } = string.Empty;
+}

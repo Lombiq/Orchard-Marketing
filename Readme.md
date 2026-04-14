@@ -1,14 +1,39 @@
-# Lombiq <add project name here>
+# Lombiq Marketing for Orchard Core
 
-## About
-
-Add a general overview of the project here. Keep or remove the OSOCE note below as necessary.
-
-Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
+[![Lombiq.Marketing NuGet](https://img.shields.io/nuget/v/Lombiq.Marketing?label=Lombiq.Marketing)](https://www.nuget.org/packages/Lombiq.Marketing/)
+[![Lombiq.Marketing.Pirsch NuGet](https://img.shields.io/nuget/v/Lombiq.Marketing.Pirsch?label=Lombiq.Marketing.Pirsch)](https://www.nuget.org/packages/Lombiq.Marketing.Pirsch/)
+[![Lombiq.Marketing.UrlShortener NuGet](https://img.shields.io/nuget/v/Lombiq.Marketing.UrlShortener?label=Lombiq.Marketing.UrlShortener)](https://www.nuget.org/packages/Lombiq.Marketing.UrlShortener/)
+[![Lombiq.Marketing.Tests.UI NuGet](https://img.shields.io/nuget/v/Lombiq.Marketing.Tests.UI?label=Lombiq.Marketing.Tests.UI)](https://www.nuget.org/packages/Lombiq.Marketing.Tests.UI/)
 
 ## Documentation
 
-Add detailed documentation here. If it's a lot of content then create documentation pages under the *Docs* folder and link pages here.
+Marketing-related features, URL shortener, Pirsch analytics integration, and more.
+
+Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
+
+### `Lombiq.Marketing`
+
+This is the shared base project for the marketing modules.
+
+Read more here: [Lombiq.Marketing/Readme.md](./Lombiq.Marketing/Readme.md)
+
+### `Lombiq.Marketing.Pirsch`
+
+This adds the basic [Pirsch](https://pirsch.io/ref/BQdZP2jgqM) integration for Orchard Core.
+
+Read more here: [Lombiq.Marketing.Pirsch/Readme.md](./Lombiq.Marketing.Pirsch/Readme.md)
+
+### `Lombiq.Marketing.UrlShortener`
+
+This adds short URL support for Orchard Core.
+
+Read more here: [Lombiq.Marketing.UrlShortener/Readme.md](./Lombiq.Marketing.UrlShortener/Readme.md)
+
+### `Lombiq.Marketing.Tests.UI`
+
+This contains UI test helpers for the marketing modules.
+
+Read more here: [Lombiq.Marketing.Tests.UI/Readme.md](./Lombiq.Marketing.Tests.UI/Readme.md)
 
 ## Contributing and support
 

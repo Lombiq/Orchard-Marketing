@@ -1,0 +1,16 @@
+@using Lombiq.Marketing.Services
+@inject IClientSideTrackingMarkupService ClientSideTrackingMarkupService
+
+@{
+    var viewModels = await ClientSideTrackingMarkupService.GetViewModelsAsync();
+
+    if (!(viewModels?.Count > 0))
+    {
+        return;
+    }
+}
+
+@foreach (var viewModel in viewModels)
+{
+    @Html.Raw(viewModel.Html)
+}
