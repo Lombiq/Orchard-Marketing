@@ -1,5 +1,4 @@
 using Lombiq.Marketing.Models;
-using Lombiq.Marketing.Pirsch.Extensions;
 using Lombiq.Marketing.Pirsch.Models;
 using Lombiq.Marketing.Services;
 using Microsoft.Extensions.Logging;

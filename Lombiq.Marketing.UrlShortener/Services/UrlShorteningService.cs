@@ -1,4 +1,3 @@
-using Lombiq.Marketing.UrlShortener.Extensions;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
 using Microsoft.AspNetCore.Http.Extensions;

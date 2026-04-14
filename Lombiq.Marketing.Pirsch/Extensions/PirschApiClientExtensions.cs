@@ -1,6 +1,5 @@
 ﻿using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Models;
-using Lombiq.Marketing.Pirsch.Services;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;

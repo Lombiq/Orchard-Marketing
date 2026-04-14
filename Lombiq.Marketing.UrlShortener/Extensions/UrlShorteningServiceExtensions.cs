@@ -1,8 +1,7 @@
 ﻿using Lombiq.Marketing.UrlShortener.Models;
-using Lombiq.Marketing.UrlShortener.Services;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.UrlShortener.Extensions;
+namespace Lombiq.Marketing.UrlShortener.Services;
 
 /// <summary>
 /// Provides convenience overloads for working with <see cref="IUrlShorteningService"/>.

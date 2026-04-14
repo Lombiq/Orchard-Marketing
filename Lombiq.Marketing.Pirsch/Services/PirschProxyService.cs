@@ -1,5 +1,4 @@
 using Lombiq.Marketing.Pirsch.Constants;
-using Lombiq.Marketing.Pirsch.Extensions;
 using Lombiq.Marketing.Pirsch.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
