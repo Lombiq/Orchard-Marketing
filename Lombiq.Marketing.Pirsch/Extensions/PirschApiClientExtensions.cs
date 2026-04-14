@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Pirsch.Extensions;
+namespace Lombiq.Marketing.Pirsch.Services;
 
 public static class PirschApiClientExtensions
 {
