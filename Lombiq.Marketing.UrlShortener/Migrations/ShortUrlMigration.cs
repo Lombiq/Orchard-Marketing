@@ -1,7 +1,6 @@
 using Lombiq.Marketing.UrlShortener.Constants;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Models;
-using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentFields.Settings;
 using OrchardCore.ContentManagement.Metadata;
 using OrchardCore.ContentManagement.Metadata.Settings;
@@ -21,40 +20,35 @@ public sealed class ShortUrlMigration : DataMigration
 
     public async Task<int> CreateAsync()
     {
-        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(UtmPart), part => part
-            .WithField(nameof(UtmPart.UtmSource), field => field
-                .OfType(nameof(TextField))
+        await _contentDefinitionManager.AlterPartDefinitionAsync<UtmPart>(part => part
+            .WithField(part => part.UtmSource, field => field
                 .WithDisplayName("UTM Source")
                 .WithSettings(new TextFieldSettings
                 {
                     Hint = "The name of the website, social media platform, newsletter, or other campaign source " +
                         "where the link is shared. E.g.: lombiq-newsletter, linkedin, youtube, x, partner-site, google.",
                 }))
-            .WithField(nameof(UtmPart.UtmMedium), field => field
-                .OfType(nameof(TextField))
+            .WithField(part => part.UtmMedium, field => field
                 .WithDisplayName("UTM Medium")
                 .WithSettings(new TextFieldSettings
                 {
                     Hint = "The type of the channel where the link is shared. E.g.: social, email, referral, cpc.).",
                 }))
-            .WithField(nameof(UtmPart.UtmCampaign), field => field
-                .OfType(nameof(TextField))
+            .WithField(part => part.UtmCampaign, field => field
                 .WithDisplayName("UTM Campaign")
                 .WithSettings(new TextFieldSettings
                 {
                     Hint = "The name of the specific campaign, identifying all links shared during the campaign. " +
                         "E.g.: summer-sale-2026, lombiq-newsletter-2026-03-31.",
                 }))
-            .WithField(nameof(UtmPart.UtmContent), field => field
-                .OfType(nameof(TextField))
+            .WithField(part => part.UtmContent, field => field
                 .WithDisplayName("UTM Content")
                 .WithSettings(new TextFieldSettings
                 {
                     Hint = "The name of the specific link. Useful if you have multiple links from e.g. the same " +
                         "landing page or blog post. E.g.: banner, cta-button, foot-menu-link.",
                 }))
-            .WithField(nameof(UtmPart.UtmTerm), field => field
-                .OfType(nameof(TextField))
+            .WithField(part => part.UtmTerm, field => field
                 .WithDisplayName("UTM Term")
                 .WithSettings(new TextFieldSettings
                 {
@@ -63,9 +57,8 @@ public sealed class ShortUrlMigration : DataMigration
                 }))
         );
 
-        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(ShortUrlPart), part => part
-            .WithField(nameof(ShortUrlPart.ShortUrl), field => field
-                .OfType(nameof(TextField))
+        await _contentDefinitionManager.AlterPartDefinitionAsync<ShortUrlPart>(part => part
+            .WithField(part => part.ShortUrl, field => field
                 .WithDisplayName("Short URL")
                 .WithSettings(new TextFieldSettings
                 {
@@ -73,8 +66,7 @@ public sealed class ShortUrlMigration : DataMigration
                     Hint = "The short URL can only be a unique relative URL (for example: /jmp/short-url). /jmp prefix " +
                         "will be automatically added if not included.",
                 }))
-            .WithField(nameof(ShortUrlPart.DestinationUrl), field => field
-                .OfType(nameof(TextField))
+            .WithField(part => part.DestinationUrl, field => field
                 .WithDisplayName("Destination URL")
                 .WithSettings(new TextFieldSettings
                 {
