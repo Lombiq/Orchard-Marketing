@@ -15,7 +15,7 @@ public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
     }
 
     protected override void Build(NavigationBuilder builder) =>
-        builder.Add(T["Configuration"], configuration => configuration
+        builder
             .Add(T["Settings"], settings => settings
                 .Add(T["Marketing"], marketing => marketing
                     .AddClass("menu-marketing")
@@ -23,5 +23,5 @@ public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
                     .Add(T["Pirsch"], T["Pirsch"], pirsch => pirsch
                         .Action("Index", "Admin", new { area = "OrchardCore.Settings", groupId = PirschSettingsDriver.GroupId })
                         .Permission(PirschSettingsPermissions.ManagePirschSettings)
-                        .LocalNav()))));
+                        .LocalNav())));
 }

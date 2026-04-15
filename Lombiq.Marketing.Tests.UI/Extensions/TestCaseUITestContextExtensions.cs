@@ -86,10 +86,10 @@ public static class TestCaseUITestContextExtensions
 
         await context.SignInDirectlyAndGoToDashboardAsync();
 
-        await context.ClickReliablyOnByLinkTextAsync("Configuration");
         await context.ClickReliablyOnByLinkTextAsync("Settings");
         await context.ClickReliablyOnByLinkTextAsync("Marketing");
-        await context.ClickReliablyOnByLinkTextAsync("Pirsch");
+        await context.ClickReliablyOnUntilNavigationHasOccurredAsync(By.LinkText("Pirsch"));
+        context.GetCurrentUri().AbsolutePath.ShouldEndWith("/Settings/PirschSettings");
 
         await context.ClickAndFillInWithRetriesAsync(
             By.Id("ISite_PirschSettings_ClientSideCodeSnippet"),
