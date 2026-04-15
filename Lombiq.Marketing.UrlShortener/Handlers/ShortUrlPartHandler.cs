@@ -1,6 +1,7 @@
 ﻿using Lombiq.Marketing.UrlShortener.Controllers;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
@@ -19,7 +20,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     private readonly IUpdateModelAccessor _updateModelAccessor;
     private readonly IClock _clock;
 
-    private ShortUrlPart? _previousShortUrlPart;
+    private ModelStateDictionary ModelState => _updateModelAccessor.ModelUpdater.ModelState;
 
     public ShortUrlPartHandler(
         IUrlShorteningService urlShorteningService,
@@ -35,12 +36,6 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     {
         part.ShortUrl.Text = await GenerateRandomShortUrlAsync();
         part.ContentItem.Apply(part);
-    }
-
-    public override Task UpdatingAsync(UpdateContentContext context, ShortUrlPart part)
-    {
-        _previousShortUrlPart = part;
-        return Task.CompletedTask;
     }
 
     public override Task CreatedAsync(CreateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
@@ -67,40 +62,40 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     {
         if (string.IsNullOrEmpty(part.ShortUrl.Text))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.ShortUrl),
                 "The short URL is required.");
         }
 
         if (string.IsNullOrEmpty(part.DestinationUrl.Text))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.DestinationUrl),
                 "The destination URL is required.");
         }
 
         if (!Uri.IsWellFormedUriString(part.ShortUrl.Text, UriKind.Relative))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.ShortUrl),
                 "The short URL must be a valid relative URL (for example: /jmp/short-url).");
         }
 
         if (!Uri.TryCreate(part.DestinationUrl.Text, UriKind.RelativeOrAbsolute, out var destinationUri))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.DestinationUrl),
                 "The destination URL must be a valid URL.");
         }
 
         if (destinationUri != null && !destinationUri.IsAbsoluteUri && !destinationUri.OriginalString.StartsWith('/'))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.DestinationUrl),
                 "The destination URL must be an absolute URL or a relative URL starting with '/'.");
         }
 
-        if (!_updateModelAccessor.ModelUpdater.ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             return;
         }
@@ -111,9 +106,9 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             part.Apply();
         }
 
-        if (!await _urlShorteningService.UpdateShortUrlAsync(_previousShortUrlPart?.ShortUrl.Text, part))
+        if (!await _urlShorteningService.UpdateShortUrlAsync(part.PreviousUrl, part))
         {
-            _updateModelAccessor.ModelUpdater.ModelState.AddModelError(
+            ModelState.AddModelError(
                 nameof(ShortUrlPart.ShortUrl),
                 "The short URL must be unique. The provided short URL is already in use.");
         }
@@ -123,7 +118,13 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             part.ContentItem.DisplayText = part.DestinationUrl.Text;
         }
 
-        _previousShortUrlPart = part;
+        if (ModelState.IsValid && !string.IsNullOrEmpty(part.PreviousUrl))
+        {
+            await _urlShorteningService.DeleteShortUrlAsync(part.PreviousUrl);
+        }
+
+        part.PreviousUrl = part.ShortUrl.Text;
+        part.Apply();
     }
 
     private async Task<string> GenerateRandomShortUrlAsync()

@@ -99,6 +99,9 @@ public class UrlShorteningService : IUrlShorteningService
     public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem) =>
         InvalidateShortUrlCacheAsync(shortUrlContentItem.GetOrCreate<ShortUrlPart>().ShortUrl.Text);
 
+    public Task DeleteShortUrlAsync(string url) =>
+        InvalidateShortUrlCacheAsync(url);
+
     private ShortUrlTargetUrls SetCache(ContentItem shortUrlContentItem) =>
         SetCache(shortUrlContentItem.GetOrCreate<ShortUrlPart>());
 
