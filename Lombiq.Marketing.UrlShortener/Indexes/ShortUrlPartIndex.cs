@@ -18,7 +18,7 @@ public class ShortUrlPartIndexProvider : IndexProvider<ContentItem>
             .When(contentItem => contentItem.Has<ShortUrlPart>())
             .Map(contentItem =>
             {
-                var shortUrlPart = contentItem.As<ShortUrlPart>();
+                var shortUrlPart = contentItem.GetOrCreate<ShortUrlPart>();
 
                 return new ShortUrlPartIndex
                 {

@@ -83,7 +83,7 @@ public sealed class ShortUrlMigration : DataMigration
                 })));
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.ShortUrl, type => type
-            .DisplayedAs("Short URL")
+            .WithDisplayName("Short URL")
             .Creatable()
             .Listable()
             .WithPart<TitlePart>()

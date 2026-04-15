@@ -1,6 +1,5 @@
 using Atata;
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using OpenQA.Selenium;
@@ -117,9 +116,7 @@ public static class TestCaseUITestContextExtensions
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.ResponseLogFilter = e =>
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/secret-sauce/pv", 404);
-
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/secret-sauce/pv");
         configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
             {
@@ -137,13 +134,11 @@ public static class TestCaseUITestContextExtensions
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.ResponseLogFilter = e =>
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url", 404) &&
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url-updated", 404);
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url");
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url-updated");
     }
 
     private static bool IsUnexpectedAppLog(IApplicationLogEntry logEntry) =>
-        AppLogAssertionHelper.NotMediaCacheEntries(logEntry) &&
         logEntry.Level >= LogLevel.Error &&
         !IsExpectedPirschShortUrlError(logEntry);
 
