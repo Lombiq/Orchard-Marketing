@@ -12,13 +12,20 @@ namespace Lombiq.Marketing.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {
+    private const string ShortUrl = "/jmp/marketing-short-url";
+    private const string ShortUrlUpdated = $"{ShortUrl}-updated";
     private const string TestPirschScript = "<script defer=\"\" id=\"pianjs\" data-code=\"test\" data-dev=\"test\"></script>";
 
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
+        async Task ShortUrlShouldBeInactiveAsync(string url)
+        {
+            await context.GoToRelativeUrlAsync(url, onlyIfNotAlreadyThere: false);
+            context.GetCurrentUri().AbsolutePath.ShouldBe(url);
+            context.Exists(By.XPath("//h1[contains(., 'The page could not be found.')]"));
+        }
+
         const string title = "Marketing Short URL Test";
-        const string shortUrl = "/jmp/marketing-short-url";
-        const string updatedShortUrl = "/jmp/marketing-short-url-updated";
 
         await context.SignInDirectlyAndGoToDashboardAsync();
 
@@ -27,7 +34,7 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnByLinkTextAsync("New Short URL");
 
         await context.FillContentItemTitleAsync(title);
-        await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", shortUrl);
+        await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", ShortUrl);
         await context.FillShortUrlFieldAsync("ShortUrlPart_DestinationUrl_Text", "/");
 
         await context.ClickReliablyOnByLinkTextAsync("UTM Parameters");
@@ -40,7 +47,7 @@ public static class TestCaseUITestContextExtensions
         await context.ClickPublishAsync();
         context.ShouldBeSuccess();
 
-        await context.GoToRelativeUrlAsync(shortUrl, onlyIfNotAlreadyThere: false);
+        await context.GoToRelativeUrlAsync(ShortUrl, onlyIfNotAlreadyThere: false);
         var redirectedUri = context.GetCurrentUri();
         redirectedUri.AbsolutePath.ShouldBe("/");
         QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
@@ -52,16 +59,18 @@ public static class TestCaseUITestContextExtensions
         context.Exists(By.XPath($"//a[normalize-space()='{title}']")).ShouldBeTrue();
 
         await context.ClickReliablyOnAsync(By.XPath($"//a[normalize-space()='{title}']"));
-        await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", updatedShortUrl);
+        await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", ShortUrlUpdated);
         await context.ClickReliablyOnByLinkTextAsync("UTM Parameters");
         await context.FillShortUrlFieldAsync("UtmPart_UtmCampaign_Text", "summer-sale");
         await context.ClickPublishAsync();
         context.ShouldBeSuccess();
 
-        await context.GoToRelativeUrlAsync(updatedShortUrl, onlyIfNotAlreadyThere: false);
+        await context.GoToRelativeUrlAsync(ShortUrlUpdated, onlyIfNotAlreadyThere: false);
         var updatedUri = context.GetCurrentUri();
         updatedUri.AbsolutePath.ShouldBe("/");
         QueryHelpers.ParseQuery(updatedUri.Query).ShouldBeEmpty();
+
+        await ShortUrlShouldBeInactiveAsync(ShortUrl);
 
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
@@ -72,12 +81,10 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
-        context.Exists(By.XPath($"//a[normalize-space()='{title}']").Safely()).ShouldBeFalse();
+        context.Missing(By.XPath($"//a[normalize-space()='{title}']"));
 
-        await context.GoToRelativeUrlAsync(updatedShortUrl, onlyIfNotAlreadyThere: false);
-        context.GetCurrentUri().AbsolutePath.ShouldBe(updatedShortUrl);
-        await context.GoToRelativeUrlAsync(shortUrl, onlyIfNotAlreadyThere: false);
-        context.GetCurrentUri().AbsolutePath.ShouldBe(shortUrl);
+        await ShortUrlShouldBeInactiveAsync(ShortUrlUpdated);
+        await ShortUrlShouldBeInactiveAsync(ShortUrl);
     }
 
     public static async Task TestPirschClientSideTrackingAutomaticInjectionAsync(this UITestContext context)
@@ -134,8 +141,8 @@ public static class TestCaseUITestContextExtensions
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url");
-        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url-updated");
+        configuration.WithIgnoreExpectedNotFoundResponseFilter(ShortUrl);
+        configuration.WithIgnoreExpectedNotFoundResponseFilter(ShortUrlUpdated);
     }
 
     private static bool IsUnexpectedAppLog(IApplicationLogEntry logEntry) =>
