@@ -22,6 +22,7 @@ public sealed class PirschSettingsAdminMenu : AdminMenuNavigationProviderBase
                     .Id("marketing")
                     .Add(T["Pirsch"], T["Pirsch"], pirsch => pirsch
                         .Action("Index", "Admin", new { area = "OrchardCore.Settings", groupId = PirschSettingsDriver.GroupId })
+                        .Id("marketing-pirsch")
                         .Permission(PirschSettingsPermissions.ManagePirschSettings)
                         .LocalNav())));
 }
