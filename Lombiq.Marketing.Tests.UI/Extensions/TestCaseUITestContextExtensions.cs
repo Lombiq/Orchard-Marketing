@@ -28,8 +28,8 @@ public static class TestCaseUITestContextExtensions
 
         await context.SignInDirectlyAndGoToDashboardAsync();
 
-        await context.ClickReliablyOnByLinkTextAsync("Tools");
-        await context.ClickReliablyOnByLinkTextAsync("Short URLs");
+        await context.ClickReliablyOnAsync(By.Id("tools"));
+        await context.ClickReliablyOnAsync(By.Id("shorturls"));
         await context.ClickReliablyOnByLinkTextAsync("New Short URL");
 
         await context.FillContentItemTitleAsync(title);
@@ -52,7 +52,7 @@ public static class TestCaseUITestContextExtensions
         QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
 
         await context.GoToDashboardAsync();
-        await context.ClickReliablyOnByLinkTextAsync("Short URLs");
+        await context.ClickReliablyOnAsync(By.Id("shorturls"));
 
         await context.FilterOnAdminAsync(title);
         context.Exists(By.XPath($"//a[normalize-space()='{title}']"));
