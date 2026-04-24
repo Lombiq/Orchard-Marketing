@@ -1,35 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
-
+<Project>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <DefaultItemExcludes>$(DefaultItemExcludes);.git*</DefaultItemExcludes>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.props" />
+  <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="1.0.1-alpha.7.osoe-1208" />
+
   <PropertyGroup>
     <Title>Lombiq Marketing - URL Shortener for Orchard Core</Title>
-    <Authors>Lombiq Technologies</Authors>
-    <Copyright>Copyright © 2026, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq Marketing - URL Shortener for Orchard Core: Create short URLs that redirect to long URLs and provide extensibility for handling a redirect event.</Description>
-    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <CopyrightYear>2026</CopyrightYear>
+    <Description>Create short URLs that redirect to long URLs and provide extensibility for handling a redirect event.</Description>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;UrlShortener;ShortUrl;Redirect</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/Lombiq.Marketing.UrlShortener/Readme.md</PackageProjectUrl>
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Readme.md" />
-    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="3.0.0-preview-18975" />
     <PackageReference Include="OrchardCore.ContentManagement" Version="3.0.0-preview-18975" />
     <PackageReference Include="OrchardCore.ContentFields" Version="3.0.0-preview-18975" />
     <PackageReference Include="OrchardCore.Contents" Version="3.0.0-preview-18975" />
@@ -37,12 +25,6 @@
     <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="3.0.0-preview-18975" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.6.1-alpha.7.osoe-925" />
-  </ItemGroup>
-
+  <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />
+  <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.targets" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="1.0.1-alpha.7.osoe-1208" />
 </Project>
