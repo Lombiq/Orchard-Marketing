@@ -164,12 +164,12 @@ public static class TestCaseUITestContextExtensions
         string id,
         string dataDev)
     {
-        pageSource.ContainsOrdinalIgnoreCase($"id=\"{id}\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("src=\"/secret-sauce/sauce.js\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-hit-endpoint=\"/secret-sauce/pv\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-event-endpoint=\"/secret-sauce/e\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-session-endpoint=\"/secret-sauce/s\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-code=\"test\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase($"data-dev=\"{dataDev}\"").ShouldBeTrue();
+        pageSource.ShouldContain($"id=\"{id}\"");
+        pageSource.ShouldContain("src=\"/secret-sauce/sauce.js\"");
+        pageSource.ShouldContain("data-hit-endpoint=\"/secret-sauce/pv\"");
+        pageSource.ShouldContain("data-event-endpoint=\"/secret-sauce/e\"");
+        pageSource.ShouldContain("data-session-endpoint=\"/secret-sauce/s\"");
+        pageSource.ShouldContain("data-code=\"test\"");
+        pageSource.ShouldContain($"data-dev=\"{dataDev}\"");
     }
 }
