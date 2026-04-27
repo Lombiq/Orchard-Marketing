@@ -51,8 +51,8 @@ Example appsettings or environment variable configuration:
         // The data-dev attribute value to use in the client-side tracking snippet, if not set in the snippet 
         // itself. More info: https://docs.pirsch.io/get-started/frontend-integration#testing-pirsch-locally
         "DataDev": "dev-url.com",
-        // The layout zone where the client-side tracking snippet should be rendered automatically.
-        "AutoRenderZone": "Head",
+        // The layout zone where the client-side tracking snippet should be rendered automatically. "HeadMeta" is the default.
+        "AutoRenderZone": "MyZone",
         // The Pirsch API client secret. We do not recommend setting this from appsettings for security reasons,
         // but you can do it for testing or if you have a secure way to store secrets in your hosting environment.
         // You can get this on your Pirsch dashboard under Settings → Integration → Clients to configure access to only

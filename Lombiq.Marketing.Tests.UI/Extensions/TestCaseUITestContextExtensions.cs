@@ -14,6 +14,7 @@ namespace Lombiq.Marketing.Tests.UI.Extensions;
 public static class TestCaseUITestContextExtensions
 {
     private const string TestPirschScript = "<script defer=\"\" id=\"pianjs\" data-code=\"test\" data-dev=\"test\"></script>";
+    private const string TestPirschDataDev = "lombiq-marketing";
 
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
@@ -100,7 +101,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToHomePageAsync();
 
-        AssertPirschSnippet(context.Driver.PageSource, "pianjs", "open-source-orchard-core-extensions.com");
+        AssertPirschSnippet(context.Driver.PageSource, "pianjs", TestPirschDataDev);
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
@@ -126,7 +127,10 @@ public static class TestCaseUITestContextExtensions
                 argumentsBuilder
                     .AddWithValue(
                         "OrchardCore:Lombiq_Marketing:Pirsch:ClientSideCodeSnippet",
-                        TestPirschScript);
+                        TestPirschScript)
+                    .AddWithValue(
+                        "OrchardCore:Lombiq_Marketing:Pirsch:DataDev",
+                        TestPirschDataDev);
 
                 return Task.CompletedTask;
             };
@@ -164,12 +168,12 @@ public static class TestCaseUITestContextExtensions
         string id,
         string dataDev)
     {
-        pageSource.ContainsOrdinalIgnoreCase($"id=\"{id}\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("src=\"/secret-sauce/sauce.js\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-hit-endpoint=\"/secret-sauce/pv\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-event-endpoint=\"/secret-sauce/e\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-session-endpoint=\"/secret-sauce/s\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase("data-code=\"test\"").ShouldBeTrue();
-        pageSource.ContainsOrdinalIgnoreCase($"data-dev=\"{dataDev}\"").ShouldBeTrue();
+        pageSource.ShouldContain($"id=\"{id}\"");
+        pageSource.ShouldContain("src=\"/secret-sauce/sauce.js\"");
+        pageSource.ShouldContain("data-hit-endpoint=\"/secret-sauce/pv\"");
+        pageSource.ShouldContain("data-event-endpoint=\"/secret-sauce/e\"");
+        pageSource.ShouldContain("data-session-endpoint=\"/secret-sauce/s\"");
+        pageSource.ShouldContain("data-code=\"test\"");
+        pageSource.ShouldContain($"data-dev=\"{dataDev}\"");
     }
 }
