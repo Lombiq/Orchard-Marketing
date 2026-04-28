@@ -1,3 +1,4 @@
+using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
@@ -164,10 +165,10 @@ public static class TestCaseUITestContextExtensions
         string dataDev)
     {
         pageSource.ShouldContain($"id=\"{id}\"");
-        pageSource.ShouldContain("src=\"/secret-sauce/sauce.js\"");
-        pageSource.ShouldContain("data-hit-endpoint=\"/secret-sauce/pv\"");
-        pageSource.ShouldContain("data-event-endpoint=\"/secret-sauce/e\"");
-        pageSource.ShouldContain("data-session-endpoint=\"/secret-sauce/s\"");
+        pageSource.ShouldContain($"src=\"{PirschProxyConstants.ProxyScriptPath}\"");
+        pageSource.ShouldContain($"data-hit-endpoint=\"/{PirschProxyConstants.ProxyPageViewPath}\"");
+        pageSource.ShouldContain($"data-event-endpoint=\"{PirschProxyConstants.ProxyEventPath}\"");
+        pageSource.ShouldContain($"data-session-endpoint=\"{PirschProxyConstants.ProxySessionPath}\"");
         pageSource.ShouldContain("data-code=\"test\"");
         pageSource.ShouldContain($"data-dev=\"{dataDev}\"");
     }
