@@ -14,6 +14,7 @@ public static class TestCaseUITestContextExtensions
     private const string ShortUrl = "/jmp/marketing-short-url";
     private const string ShortUrlUpdated = $"{ShortUrl}-updated";
     private const string TestPirschScript = "<script defer=\"\" id=\"pianjs\" data-code=\"test\" data-dev=\"test\"></script>";
+    private const string TestPirschDataDev = "lombiq-marketing";
 
     public static async Task TestShortUrlManagementAsync(this UITestContext context)
     {
@@ -103,7 +104,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToHomePageAsync();
 
-        AssertPirschSnippet(context.Driver.PageSource, "pianjs", "open-source-orchard-core-extensions.com");
+        AssertPirschSnippet(context.Driver.PageSource, "pianjs", TestPirschDataDev);
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
@@ -127,7 +128,10 @@ public static class TestCaseUITestContextExtensions
                 argumentsBuilder
                     .AddWithValue(
                         "OrchardCore:Lombiq_Marketing:Pirsch:ClientSideCodeSnippet",
-                        TestPirschScript);
+                        TestPirschScript)
+                    .AddWithValue(
+                        "OrchardCore:Lombiq_Marketing:Pirsch:DataDev",
+                        TestPirschDataDev);
 
                 return Task.CompletedTask;
             };
