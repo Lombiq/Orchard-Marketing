@@ -1,7 +1,7 @@
-using Lombiq.Marketing.Models;
+using Lombiq.Marketing.UrlShortener.Models;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.UrlShortener.Services;
 
 /// <summary>
 /// Handles a marketing hit created from a short URL redirect.

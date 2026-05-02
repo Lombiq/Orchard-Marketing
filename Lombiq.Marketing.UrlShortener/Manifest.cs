@@ -15,6 +15,7 @@ using OrchardCore.Modules.Manifest;
     Category = "Marketing",
     Description = "Adds a Short URL content type for managing short redirects.",
     Dependencies = [
+        Lombiq.Marketing.Constants.FeatureIds.Base,
         "OrchardCore.Fields"
     ]
 )]
