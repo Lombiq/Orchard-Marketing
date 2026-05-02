@@ -35,7 +35,8 @@ public sealed class ShortUrlMigration : DataMigration
                 .WithDisplayName("UTM Medium")
                 .WithSettings(new TextFieldSettings
                 {
-                    Hint = "The type of the channel where the link is shared. E.g.: social, email, referral, cpc.",
+                    Hint = "The type of the channel where the link is shared. E.g.: social, email, content (when " +
+                        "e.g. in a blog post), cpc, cta (for CTA widgets).",
                 }))
             .WithField(nameof(UtmPart.UtmCampaign), field => field
                 .OfType(nameof(TextField))
