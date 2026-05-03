@@ -1,4 +1,4 @@
-﻿using Lombiq.Marketing.UrlShortener.Controllers;
+using Lombiq.Marketing.UrlShortener.Controllers;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Routing;
@@ -37,13 +37,20 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         part.ContentItem.Apply(part);
     }
 
+    public override Task CreatedAsync(CreateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
+
+    public override async Task ClonedAsync(CloneContentContext context, ShortUrlPart part)
+    {
+        var clonedPart = context.CloneContentItem.As<ShortUrlPart>();
+        clonedPart.ShortUrl.Text = await GenerateRandomShortUrlAsync();
+        context.CloneContentItem.Apply(clonedPart);
+    }
+
     public override Task UpdatingAsync(UpdateContentContext context, ShortUrlPart part)
     {
         _previousShortUrlPart = part;
         return Task.CompletedTask;
     }
-
-    public override Task CreatedAsync(CreateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
 
     public override Task UpdatedAsync(UpdateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
 

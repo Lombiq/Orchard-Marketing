@@ -22,6 +22,9 @@ public static class TestCaseUITestContextExtensions
         const string shortUrl = "/jmp/marketing-short-url";
         const string updatedShortUrl = "/jmp/marketing-short-url-updated";
 
+        await context.EnableFeatureDirectlyAsync("Lombiq.Marketing");
+        await context.EnableFeatureDirectlyAsync("Lombiq.Marketing.UrlShortener");
+
         await context.SignInDirectlyAndGoToDashboardAsync();
 
         await context.ClickReliablyOnByLinkTextAsync("Tools");
@@ -47,9 +50,7 @@ public static class TestCaseUITestContextExtensions
         redirectedUri.AbsolutePath.ShouldBe("/");
         QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
 
-        await context.GoToDashboardAsync();
-        await context.ClickReliablyOnByLinkTextAsync("Short URLs");
-
+        await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
         context.Exists(By.XPath($"//a[normalize-space()='{title}']")).ShouldBeTrue();
 
@@ -68,11 +69,42 @@ public static class TestCaseUITestContextExtensions
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Actions')]"));
+        await context.ClickReliablyOnByLinkTextAsync("Clone");
+
+        await context.FilterOnAdminAsync(title);
+        context.Driver.FindElements(By.XPath($"//a[normalize-space()='{title}']")).Count.ShouldBeGreaterThanOrEqualTo(2);
+
+        await context.ClickReliablyOnAsync(By.XPath($"(//a[normalize-space()='{title}'])[1]"));
+        var firstShortUrl = context.Driver.FindElement(By.Id("ShortUrlPart_ShortUrl_Text")).GetAttribute("value");
+
+        await context.GoToContentItemListAsync("ShortUrl");
+        await context.FilterOnAdminAsync(title);
+        await context.ClickReliablyOnAsync(By.XPath($"(//a[normalize-space()='{title}'])[2]"));
+        var secondShortUrl = context.Driver.FindElement(By.Id("ShortUrlPart_ShortUrl_Text")).GetAttribute("value");
+
+        firstShortUrl.ShouldNotBeNullOrWhiteSpace();
+        secondShortUrl.ShouldNotBeNullOrWhiteSpace();
+        firstShortUrl.ShouldStartWith("/jmp/");
+        secondShortUrl.ShouldStartWith("/jmp/");
+        firstShortUrl.ShouldNotBe(secondShortUrl);
+
+        (firstShortUrl == updatedShortUrl || secondShortUrl == updatedShortUrl).ShouldBeTrue();
+        ((firstShortUrl != shortUrl && firstShortUrl != updatedShortUrl) || (secondShortUrl != shortUrl && secondShortUrl != updatedShortUrl))
+            .ShouldBeTrue();
+
+        await context.GoToContentItemListAsync("ShortUrl");
+        await context.FilterOnAdminAsync(title);
+        await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Actions')]"));
         await context.ClickReliablyOnByLinkTextAsync("Delete");
         await context.ClickModalOkAsync();
         context.ShouldBeSuccess();
 
-        await context.GoToContentItemListAsync("ShortUrl");
+        await context.FilterOnAdminAsync(title);
+        await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Actions')]"));
+        await context.ClickReliablyOnByLinkTextAsync("Delete");
+        await context.ClickModalOkAsync();
+        context.ShouldBeSuccess();
+
         await context.FilterOnAdminAsync(title);
         context.Exists(By.XPath($"//a[normalize-space()='{title}']").Safely()).ShouldBeFalse();
 
