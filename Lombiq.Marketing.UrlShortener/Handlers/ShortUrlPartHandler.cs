@@ -194,7 +194,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         {
             var sourceString = $"{_clock.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
 
-            var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
+            var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):x}";
             shortUrlWithPrefix = $"/jmp/{randomShortUrl}";
 
             isUnique = await _urlShorteningService.IsShortUrlUniqueAsync(shortUrlWithPrefix);
