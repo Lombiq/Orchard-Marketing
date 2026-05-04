@@ -2,12 +2,14 @@ using Lombiq.Marketing.UrlShortener.Controllers;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using StringExtensions = OrchardCore.Modules.StringExtensions;
 
@@ -127,10 +129,50 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 
         if (string.IsNullOrEmpty(part.ContentItem.DisplayText))
         {
-            part.ContentItem.DisplayText = part.DestinationUrl.Text;
+            part.ContentItem.DisplayText = BuildFullUrlWithUtmParameters(part);
         }
 
         _previousShortUrlPart = part;
+    }
+
+    private static string BuildFullUrlWithUtmParameters(ShortUrlPart part)
+    {
+        var utmPart = part.ContentItem.As<UtmPart>();
+        var baseUrl = part.DestinationUrl.Text;
+
+        var utmParameters = new Dictionary<string, string?>();
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmSource?.Text))
+        {
+            utmParameters["utm_source"] = utmPart.UtmSource.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmMedium?.Text))
+        {
+            utmParameters["utm_medium"] = utmPart.UtmMedium.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmCampaign?.Text))
+        {
+            utmParameters["utm_campaign"] = utmPart.UtmCampaign.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmContent?.Text))
+        {
+            utmParameters["utm_content"] = utmPart.UtmContent.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmTerm?.Text))
+        {
+            utmParameters["utm_term"] = utmPart.UtmTerm.Text;
+        }
+
+        if (utmParameters.Count == 0)
+        {
+            return baseUrl;
+        }
+
+        return QueryHelpers.AddQueryString(baseUrl, utmParameters);
     }
 
     private async Task<string> GenerateRandomShortUrlAsync()

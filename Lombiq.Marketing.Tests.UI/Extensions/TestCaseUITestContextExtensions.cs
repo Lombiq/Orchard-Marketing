@@ -31,7 +31,6 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnByLinkTextAsync("Short URLs");
         await context.ClickReliablyOnByLinkTextAsync("New Short URL");
 
-        await context.FillContentItemTitleAsync(title);
         await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", shortUrl);
         await context.FillShortUrlFieldAsync("ShortUrlPart_DestinationUrl_Text", "/");
 
@@ -45,15 +44,31 @@ public static class TestCaseUITestContextExtensions
         await context.ClickPublishAsync();
         context.ShouldBeSuccess();
 
+        // Verify the display text was auto-generated with UTM parameters.
+        var editLinkBy = By.LinkText(
+            "/?utm_source=newsletter&utm_medium=email&utm_campaign=spring-sale&utm_content=hero-banner&utm_term=orchard-core");
+        context.Driver.Exists(editLinkBy);
+
+        // Now add the title.
+        await context.ClickReliablyOnAsync(editLinkBy);
+        // No need to repeatedly go through the UI to reach the editor from now on.
+        var editorUri = context.GetCurrentUri();
+        await context.FillContentItemTitleAsync(title);
+        await context.ClickPublishAsync();
+        context.ShouldBeSuccess();
+
+        // Verify the display text now uses the title instead of the auto-generated URL.
+        await context.GoToContentItemListAsync("ShortUrl");
+        context.Exists(By.LinkText(title));
+
+        // Verify the redirection.
         await context.GoToRelativeUrlAsync(shortUrl, onlyIfNotAlreadyThere: false);
         var redirectedUri = context.GetCurrentUri();
         redirectedUri.AbsolutePath.ShouldBe("/");
         QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
 
+        // Update the item.
         await context.GoToContentItemListAsync("ShortUrl");
-        await context.FilterOnAdminAsync(title);
-        context.Exists(By.XPath($"//a[normalize-space()='{title}']")).ShouldBeTrue();
-
         await context.ClickReliablyOnAsync(By.XPath($"//a[normalize-space()='{title}']"));
         await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", updatedShortUrl);
         await context.ClickReliablyOnByLinkTextAsync("UTM Parameters");
@@ -61,11 +76,13 @@ public static class TestCaseUITestContextExtensions
         await context.ClickPublishAsync();
         context.ShouldBeSuccess();
 
+        // Verify the redirection still happens.
         await context.GoToRelativeUrlAsync(updatedShortUrl, onlyIfNotAlreadyThere: false);
         var updatedUri = context.GetCurrentUri();
         updatedUri.AbsolutePath.ShouldBe("/");
         QueryHelpers.ParseQuery(updatedUri.Query).ShouldBeEmpty();
 
+        // Testing cloning. The cloned item should have a different short URL.
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Actions')]"));
@@ -92,6 +109,7 @@ public static class TestCaseUITestContextExtensions
         ((firstShortUrl != shortUrl && firstShortUrl != updatedShortUrl) || (secondShortUrl != shortUrl && secondShortUrl != updatedShortUrl))
             .ShouldBeTrue();
 
+        // Verify delete.
         await context.GoToContentItemListAsync("ShortUrl");
         await context.FilterOnAdminAsync(title);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Actions')]"));
