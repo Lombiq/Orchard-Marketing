@@ -8,6 +8,7 @@ using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
+using OrchardCore.Title.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,7 +50,11 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 
         if (context.CloneContentItem.DisplayText?.ContainsOrdinalIgnoreCase(oldShortUrl) == true)
         {
-            context.CloneContentItem.DisplayText = BuildFullUrlWithUtmParameters(clonedPart);
+            var newDisplayText = BuildFullUrlWithUtmParameters(clonedPart);
+            context.CloneContentItem.DisplayText = newDisplayText;
+            var titlePart = context.CloneContentItem.As<TitlePart>();
+            titlePart.Title = newDisplayText;
+            context.CloneContentItem.Apply(titlePart);
         }
 
         context.CloneContentItem.Apply(clonedPart);
