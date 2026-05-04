@@ -44,7 +44,14 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
     public override async Task ClonedAsync(CloneContentContext context, ShortUrlPart part)
     {
         var clonedPart = context.CloneContentItem.As<ShortUrlPart>();
+        var oldShortUrl = part.ShortUrl.Text;
         clonedPart.ShortUrl.Text = await GenerateRandomShortUrlAsync();
+
+        if (context.CloneContentItem.DisplayText?.ContainsOrdinalIgnoreCase(oldShortUrl) == true)
+        {
+            context.CloneContentItem.DisplayText = BuildFullUrlWithUtmParameters(clonedPart);
+        }
+
         context.CloneContentItem.Apply(clonedPart);
     }
 
@@ -167,12 +174,11 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
             utmParameters["utm_term"] = utmPart.UtmTerm.Text;
         }
 
-        if (utmParameters.Count == 0)
-        {
-            return baseUrl;
-        }
+        var fullUrl = utmParameters.Count == 0
+            ? baseUrl
+            : QueryHelpers.AddQueryString(baseUrl, utmParameters);
 
-        return QueryHelpers.AddQueryString(baseUrl, utmParameters);
+        return $"{fullUrl} \u2190 {part.ShortUrl.Text}";
     }
 
     private async Task<string> GenerateRandomShortUrlAsync()
