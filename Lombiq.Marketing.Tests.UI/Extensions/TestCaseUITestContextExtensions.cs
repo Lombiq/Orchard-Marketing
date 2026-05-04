@@ -68,8 +68,7 @@ public static class TestCaseUITestContextExtensions
         QueryHelpers.ParseQuery(redirectedUri.Query).ShouldBeEmpty();
 
         // Update the item.
-        await context.GoToContentItemListAsync("ShortUrl");
-        await context.ClickReliablyOnAsync(By.XPath($"//a[normalize-space()='{title}']"));
+        await context.GoToAbsoluteUrlAsync(editorUri);
         await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", updatedShortUrl);
         await context.ClickReliablyOnByLinkTextAsync("UTM Parameters");
         await context.FillShortUrlFieldAsync("UtmPart_UtmCampaign_Text", "summer-sale");
