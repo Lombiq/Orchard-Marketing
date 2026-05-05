@@ -13,9 +13,5 @@ using OrchardCore.Modules.Manifest;
     Id = FeatureIds.Base,
     Name = "Lombiq Marketing",
     Category = "Marketing",
-    Description = "Contains the common abstractions and services used by the other marketing modules",
-    Dependencies =
-    [
-        Lombiq.Marketing.UrlShortener.Constants.FeatureIds.Base,
-    ]
+    Description = "Contains the common abstractions and services used by the other marketing modules"
 )]

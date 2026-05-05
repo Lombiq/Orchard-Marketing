@@ -1,13 +1,16 @@
-﻿using Lombiq.Marketing.UrlShortener.Controllers;
+using Lombiq.Marketing.UrlShortener.Controllers;
 using Lombiq.Marketing.UrlShortener.Models;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
+using OrchardCore.Title.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using StringExtensions = OrchardCore.Modules.StringExtensions;
 
@@ -37,13 +40,31 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         part.ContentItem.Apply(part);
     }
 
+    public override Task CreatedAsync(CreateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
+
+    public override async Task ClonedAsync(CloneContentContext context, ShortUrlPart part)
+    {
+        var clonedPart = context.CloneContentItem.As<ShortUrlPart>();
+        var oldShortUrl = part.ShortUrl.Text;
+        clonedPart.ShortUrl.Text = await GenerateRandomShortUrlAsync();
+
+        if (context.CloneContentItem.DisplayText?.ContainsOrdinalIgnoreCase(oldShortUrl) == true)
+        {
+            var newDisplayText = BuildFullUrlWithUtmParameters(clonedPart);
+            context.CloneContentItem.DisplayText = newDisplayText;
+            var titlePart = context.CloneContentItem.As<TitlePart>();
+            titlePart.Title = newDisplayText;
+            context.CloneContentItem.Apply(titlePart);
+        }
+
+        context.CloneContentItem.Apply(clonedPart);
+    }
+
     public override Task UpdatingAsync(UpdateContentContext context, ShortUrlPart part)
     {
         _previousShortUrlPart = part;
         return Task.CompletedTask;
     }
-
-    public override Task CreatedAsync(CreateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
 
     public override Task UpdatedAsync(UpdateContentContext context, ShortUrlPart part) => UpdateShortUrlAsync(part);
 
@@ -120,10 +141,49 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
 
         if (string.IsNullOrEmpty(part.ContentItem.DisplayText))
         {
-            part.ContentItem.DisplayText = part.DestinationUrl.Text;
+            part.ContentItem.DisplayText = BuildFullUrlWithUtmParameters(part);
         }
 
         _previousShortUrlPart = part;
+    }
+
+    private static string BuildFullUrlWithUtmParameters(ShortUrlPart part)
+    {
+        var utmPart = part.ContentItem.As<UtmPart>();
+        var baseUrl = part.DestinationUrl.Text;
+
+        var utmParameters = new Dictionary<string, string?>();
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmSource?.Text))
+        {
+            utmParameters["utm_source"] = utmPart.UtmSource.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmMedium?.Text))
+        {
+            utmParameters["utm_medium"] = utmPart.UtmMedium.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmCampaign?.Text))
+        {
+            utmParameters["utm_campaign"] = utmPart.UtmCampaign.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmContent?.Text))
+        {
+            utmParameters["utm_content"] = utmPart.UtmContent.Text;
+        }
+
+        if (!string.IsNullOrEmpty(utmPart?.UtmTerm?.Text))
+        {
+            utmParameters["utm_term"] = utmPart.UtmTerm.Text;
+        }
+
+        var fullUrl = utmParameters.Count == 0
+            ? baseUrl
+            : QueryHelpers.AddQueryString(baseUrl, utmParameters);
+
+        return $"{fullUrl} \u2190 {part.ShortUrl.Text}";
     }
 
     private async Task<string> GenerateRandomShortUrlAsync()
@@ -134,7 +194,7 @@ public class ShortUrlPartHandler : ContentPartHandler<ShortUrlPart>
         {
             var sourceString = $"{_clock.UtcNow.Ticks.ToTechnicalString()}_{Guid.NewGuid()}";
 
-            var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):X}";
+            var randomShortUrl = $"{sourceString.GetHashCode(StringComparison.OrdinalIgnoreCase):x}";
             shortUrlWithPrefix = $"/jmp/{randomShortUrl}";
 
             isUnique = await _urlShorteningService.IsShortUrlUniqueAsync(shortUrlWithPrefix);

@@ -1,4 +1,5 @@
 using Lombiq.Marketing.UrlShortener.Constants;
+using Lombiq.Marketing.UrlShortener.Events;
 using Lombiq.Marketing.UrlShortener.Handlers;
 using Lombiq.Marketing.UrlShortener.Indexes;
 using Lombiq.Marketing.UrlShortener.Migrations;
@@ -24,9 +25,8 @@ public sealed class Startup : StartupBase
             .WithMigration<ShortUrlMigration>();
 
         services.AddIndexProvider<ShortUrlPartIndexProvider>();
-
+        services.AddScoped<IShortUrlRedirectEventHandler, MarketingShortUrlRedirectEventHandler>();
         services.AddScoped<IUrlShorteningService, UrlShorteningService>();
-
         services.AddScoped<INavigationProvider, UrlShortenerAdminMenu>();
     }
 }

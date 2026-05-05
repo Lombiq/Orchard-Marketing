@@ -45,4 +45,8 @@
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lombiq.Marketing\Lombiq.Marketing.csproj" />
+  </ItemGroup>
+
 </Project>
