@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YesSql;
+using ISession = YesSql.ISession;
 
 namespace Lombiq.Marketing.UrlShortener.Services;
 
@@ -23,7 +24,10 @@ public class UrlShorteningService : IUrlShorteningService
     private readonly IMemoryCache _memoryCache;
     private readonly ISignal _signal;
 
-    public UrlShorteningService(ISession session, IMemoryCache memoryCache, ISignal signal)
+    public UrlShorteningService(
+        ISession session,
+        IMemoryCache memoryCache,
+        ISignal signal)
     {
         _session = session;
         _memoryCache = memoryCache;

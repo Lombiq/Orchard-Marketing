@@ -1,4 +1,5 @@
 using Lombiq.Marketing.UrlShortener.Constants;
+using Lombiq.Marketing.UrlShortener.Drivers;
 using Lombiq.Marketing.UrlShortener.Events;
 using Lombiq.Marketing.UrlShortener.Handlers;
 using Lombiq.Marketing.UrlShortener.Indexes;
@@ -8,6 +9,7 @@ using Lombiq.Marketing.UrlShortener.Navigation;
 using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.ContentManagement;
+using OrchardCore.ContentManagement.Display.ContentDisplay;
 using OrchardCore.Data;
 using OrchardCore.Modules;
 using OrchardCore.Navigation;
@@ -22,6 +24,7 @@ public sealed class Startup : StartupBase
         services.AddContentPart<UtmPart>();
         services.AddContentPart<ShortUrlPart>()
             .AddHandler<ShortUrlPartHandler>()
+            .UseDisplayDriver<ShortUrlPartDisplayDriver>()
             .WithMigration<ShortUrlMigration>();
 
         services.AddIndexProvider<ShortUrlPartIndexProvider>();
