@@ -33,11 +33,11 @@ public sealed class ShortUrlPartDisplayDriver : ContentPartDisplayDriver<ShortUr
             shapeType,
             ctx => ctx.ShapeFactory.CreateAsync(shapeType),
             initializeAsync: shape =>
-        {
-            shape.Properties["DisplayedUrl"] =
-                ShortUrlHelpers.GetFullShortUrl(part.ShortUrl.Text, _httpContextAccessor.HttpContext)?.OriginalString;
+            {
+                shape.Properties["DisplayedUrl"] =
+                    ShortUrlHelpers.GetFullShortUrl(part.ShortUrl.Text, _httpContextAccessor.HttpContext)?.OriginalString;
 
-            return Task.CompletedTask;
-        })
-            .RenderWhen(() => _contentManager.HasPublishedVersionAsync(part.ContentItem));
+                return Task.CompletedTask;
+            })
+        .RenderWhen(() => _contentManager.HasPublishedVersionAsync(part.ContentItem));
 }
