@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lombiq.Marketing.UrlShortener\Lombiq.Marketing.UrlShortener.csproj" />
     <ProjectReference Include="..\Lombiq.Marketing\Lombiq.Marketing.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,6 @@
 using Lombiq.Marketing.Constants;
 using Lombiq.Marketing.Filters;
 using Lombiq.Marketing.Services;
-using Lombiq.Marketing.UrlShortener.Events;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
@@ -14,7 +13,6 @@ public sealed class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IClientSideTrackingMarkupService, ClientSideTrackingMarkupService>();
-        services.AddScoped<IShortUrlRedirectEventHandler, MarketingShortUrlRedirectEventHandler>();
         services.Configure<MvcOptions>(options => options.Filters.Add<ClientSideTrackingInjectingFilter>());
     }
 }

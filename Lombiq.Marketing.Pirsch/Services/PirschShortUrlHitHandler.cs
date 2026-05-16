@@ -1,6 +1,6 @@
-using Lombiq.Marketing.Models;
 using Lombiq.Marketing.Pirsch.Models;
-using Lombiq.Marketing.Services;
+using Lombiq.Marketing.UrlShortener.Models;
+using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 

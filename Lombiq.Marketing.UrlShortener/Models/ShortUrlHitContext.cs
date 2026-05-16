@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Lombiq.Marketing.Models;
+namespace Lombiq.Marketing.UrlShortener.Models;
 
 public sealed class ShortUrlHitContext
 {
