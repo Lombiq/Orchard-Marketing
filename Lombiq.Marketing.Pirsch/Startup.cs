@@ -6,6 +6,7 @@ using Lombiq.Marketing.Pirsch.Navigation;
 using Lombiq.Marketing.Pirsch.Permissions;
 using Lombiq.Marketing.Pirsch.Services;
 using Lombiq.Marketing.Services;
+using Lombiq.Marketing.UrlShortener.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,6 @@ public sealed class Startup : StartupBase
             });
         services.AddTransient<IConfigureOptions<PirschSettings>, PirschSettingsConfiguration>();
         services.AddScoped<IClientSideTrackingProvider, PirschClientSideTrackingProvider>();
-        services.AddScoped<IShortUrlHitHandler, PirschShortUrlHitHandler>();
         services.AddSiteDisplayDriver<PirschSettingsDriver>();
         services.AddPermissionProvider<PirschSettingsPermissions>();
         services.AddNavigationProvider<PirschSettingsAdminMenu>();
@@ -55,4 +55,11 @@ public sealed class Startup : StartupBase
         app.UseMiddleware<PirschClientHintsMiddleware>();
         app.UseMiddleware<PirschProxyMiddleware>();
     }
+}
+
+[RequireFeatures(UrlShortener.Constants.FeatureIds.Base)]
+public sealed class UrlShortenerStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services) =>
+        services.AddScoped<IShortUrlHitHandler, PirschShortUrlHitHandler>();
 }

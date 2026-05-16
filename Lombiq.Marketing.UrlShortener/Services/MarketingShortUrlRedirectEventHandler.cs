@@ -1,12 +1,12 @@
-using Lombiq.Marketing.Models;
 using Lombiq.Marketing.UrlShortener.Events;
+using Lombiq.Marketing.UrlShortener.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using OrchardCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lombiq.Marketing.Services;
+namespace Lombiq.Marketing.UrlShortener.Services;
 
 public sealed class MarketingShortUrlRedirectEventHandler : IShortUrlRedirectEventHandler
 {

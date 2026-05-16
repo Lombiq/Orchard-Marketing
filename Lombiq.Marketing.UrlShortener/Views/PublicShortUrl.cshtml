@@ -1,0 +1,35 @@
+@{
+    var displayedUrl = Model.DisplayedUrl as string;
+    var copyButtonId = $"copy-short-url-{Guid.NewGuid():N}";
+
+    if (string.IsNullOrWhiteSpace(displayedUrl))
+    {
+        return;
+    }
+}
+
+<div class="d-flex align-items-center gap-2 flex-wrap">
+    <code class="mb-0">@displayedUrl</code>
+    <button id="@copyButtonId"
+            type="button"
+            class="p-0 border-0 bg-transparent text-muted lh-1"
+            data-copy-url="@displayedUrl"
+            title="@T["Copy URL"]"
+            aria-label="@T["Copy URL"]">
+        <i class="fa-regular fa-copy" aria-hidden="true"></i>
+    </button>
+</div>
+
+<script at="Foot">
+    (() => {
+        const copyButton = document.getElementById('@copyButtonId');
+        if (!copyButton) return;
+
+        copyButton.addEventListener('click', async () => {
+            const text = copyButton.dataset.copyUrl;
+            if (!text) return;
+
+            await navigator.clipboard.writeText(text);
+        });
+    })();
+</script>

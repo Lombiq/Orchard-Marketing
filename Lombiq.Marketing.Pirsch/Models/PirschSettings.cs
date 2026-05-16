@@ -8,5 +8,5 @@ public sealed class PirschSettings
 
     public string DataDev { get; set; } = string.Empty;
 
-    public string AutoRenderZone { get; set; } = string.Empty;
+    public string AutoRenderZone { get; set; } = "HeadMeta";
 }
