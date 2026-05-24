@@ -1,4 +1,6 @@
+using AngleSharp.Dom;
 using Atata;
+using Lombiq.HelpfulLibraries.Common.Utilities;
 using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using OpenQA.Selenium;
 using Shouldly;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -128,6 +132,7 @@ public static class TestCaseUITestContextExtensions
         AssertPirschSnippet(context.Driver.PageSource, "pianjs", "test");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
+        // await context.SwitchToInteractiveAsync();
 
         await context.ClickReliablyOnByLinkTextAsync("Configuration");
         await context.ClickReliablyOnByLinkTextAsync("Settings");
@@ -205,12 +210,17 @@ public static class TestCaseUITestContextExtensions
         string id,
         string dataDev)
     {
-        pageSource.ShouldContain($"id=\"{id}\"");
-        pageSource.ShouldContain($"src=\"{PirschProxyConstants.ProxyScriptPath}\"");
-        pageSource.ShouldContain($"data-hit-endpoint=\"/{PirschProxyConstants.ProxyPageViewPath}\"");
-        pageSource.ShouldContain($"data-event-endpoint=\"{PirschProxyConstants.ProxyEventPath}\"");
-        pageSource.ShouldContain($"data-session-endpoint=\"{PirschProxyConstants.ProxySessionPath}\"");
-        pageSource.ShouldContain("data-code=\"test\"");
-        pageSource.ShouldContain($"data-dev=\"{dataDev}\"");
+        var document = HtmlHelper.ParseHtmlFragment(pageSource);
+        var node = document
+            .Descendants<Element>()
+            .FirstOrDefault(element => element.Id == id)
+            .ShouldNotBeNull();
+
+        node.GetAttribute("src").ShouldBe(PirschProxyConstants.ProxyScriptPath);
+        node.GetAttribute("data-hit-endpoint").ShouldBe(PirschProxyConstants.ProxyPageViewPath);
+        node.GetAttribute("data-event-endpoint").ShouldBe(PirschProxyConstants.ProxyEventPath);
+        node.GetAttribute("data-session-endpoint").ShouldBe(PirschProxyConstants.ProxySessionPath);
+        node.GetAttribute("data-code").ShouldBe("test");
+        node.GetAttribute("data-dev").ShouldBe(dataDev);
     }
 }
