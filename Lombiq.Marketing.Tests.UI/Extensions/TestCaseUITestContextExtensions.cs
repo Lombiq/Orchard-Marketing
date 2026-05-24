@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using OpenQA.Selenium;
 using Shouldly;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -30,9 +29,7 @@ public static class TestCaseUITestContextExtensions
         await context.EnableFeatureDirectlyAsync("Lombiq.Marketing.UrlShortener");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-
-        await context.ClickReliablyOnByLinkTextAsync("Tools");
-        await context.ClickReliablyOnByLinkTextAsync("Short URLs");
+        await context.ClickThroughAdminMenuAsync("tools", "shorturls");
         await context.ClickReliablyOnByLinkTextAsync("New Short URL");
 
         await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", shortUrl);
@@ -132,12 +129,7 @@ public static class TestCaseUITestContextExtensions
         AssertPirschSnippet(context.Driver.PageSource, "pianjs", "test");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-        // await context.SwitchToInteractiveAsync();
-
-        await context.ClickReliablyOnByLinkTextAsync("Configuration");
-        await context.ClickReliablyOnByLinkTextAsync("Settings");
-        await context.ClickReliablyOnByLinkTextAsync("Marketing");
-        await context.ClickReliablyOnByLinkTextAsync("Pirsch");
+        await context.ClickThroughAdminMenuAsync("settings", "marketing", "marketing-pirsch");
 
         await context.ClickAndFillInWithRetriesAsync(
             By.Id("ISite_PirschSettings_ClientSideCodeSnippet"),
