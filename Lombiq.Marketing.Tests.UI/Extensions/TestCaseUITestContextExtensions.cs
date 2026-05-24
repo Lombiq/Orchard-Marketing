@@ -1,5 +1,5 @@
-using Lombiq.Marketing.Pirsch.Constants;
 using Atata;
+using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
