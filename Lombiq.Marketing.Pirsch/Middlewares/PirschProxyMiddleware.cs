@@ -43,6 +43,6 @@ public sealed class PirschProxyMiddleware
             return;
         }
 
-        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        await context.NotFoundAsync();
     }
 }
