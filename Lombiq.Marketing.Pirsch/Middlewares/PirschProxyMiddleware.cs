@@ -11,38 +11,20 @@ public sealed class PirschProxyMiddleware
 
     public PirschProxyMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task InvokeAsync(HttpContext context, IPirschProxyService pirschProxyService)
+    public Task InvokeAsync(HttpContext context, IPirschProxyService pirschProxyService)
     {
         if (!context.Request.Path.StartsWithSegments(PirschProxyConstants.ProxyPathPrefix))
         {
-            await _next(context);
-            return;
+            return _next(context);
         }
 
-        if (context.Request.Path == PirschProxyConstants.ProxyScriptPath)
+        return context.Request.Path.ToString() switch
         {
-            await pirschProxyService.ProxyScriptAsync();
-            return;
-        }
-
-        if (context.Request.Path == PirschProxyConstants.ProxyPageViewPath)
-        {
-            await pirschProxyService.ProxyPageViewAsync();
-            return;
-        }
-
-        if (context.Request.Path == PirschProxyConstants.ProxyEventPath)
-        {
-            await pirschProxyService.ProxyEventAsync();
-            return;
-        }
-
-        if (context.Request.Path == PirschProxyConstants.ProxySessionPath)
-        {
-            await pirschProxyService.ProxySessionAsync();
-            return;
-        }
-
-        await context.NotFoundAsync();
+            PirschProxyConstants.ProxyScriptPath => pirschProxyService.ProxyScriptAsync(),
+            PirschProxyConstants.ProxyPageViewPath => pirschProxyService.ProxyPageViewAsync(),
+            PirschProxyConstants.ProxyEventPath => pirschProxyService.ProxyEventAsync(),
+            PirschProxyConstants.ProxySessionPath => pirschProxyService.ProxySessionAsync(),
+            _ => context.NotFoundAsync(),
+        };
     }
 }
