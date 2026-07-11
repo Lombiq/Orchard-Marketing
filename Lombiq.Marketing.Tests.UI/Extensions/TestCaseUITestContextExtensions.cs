@@ -143,7 +143,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
-        await context.ClickReliablyOnSubmitAsync();
+        await context.ClickReliablyOnSubmitAsync(withJavaScript: true); // This click has been flaky before.
         context.ShouldBeSuccess();
 
         await context.GoToHomePageAsync();
