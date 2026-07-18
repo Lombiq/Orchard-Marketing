@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="9.0.1-alpha.24.osoe-925" />
+    <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="10.0.0" />
   </ItemGroup>
 
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />
