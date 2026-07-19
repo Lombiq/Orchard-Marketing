@@ -3,10 +3,10 @@ namespace Lombiq.Marketing.Pirsch.Constants;
 public static class PirschProxyConstants
 {
     public const string ProxyPathPrefix = "/secret-sauce";
-    public const string ProxyScriptPath = "/secret-sauce/sauce.js";
-    public const string ProxyPageViewPath = "/secret-sauce/pv";
-    public const string ProxyEventPath = "/secret-sauce/e";
-    public const string ProxySessionPath = "/secret-sauce/s";
+    public const string ProxyScriptPath = ProxyPathPrefix + "/sauce.js";
+    public const string ProxyPageViewPath = ProxyPathPrefix + "/pv";
+    public const string ProxyEventPath = ProxyPathPrefix + "/e";
+    public const string ProxySessionPath = ProxyPathPrefix + "/s";
 
     public const string PirschBaseUrl = "https://api.pirsch.io";
     public const string PirschScriptPath = "/pa.js";

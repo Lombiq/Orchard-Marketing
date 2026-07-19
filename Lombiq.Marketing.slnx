@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Lombiq.Marketing.Pirsch/Lombiq.Marketing.Pirsch.csproj" />
+  <Project Path="Lombiq.Marketing.Tests.UI/Lombiq.Marketing.Tests.UI.csproj" />
+  <Project Path="Lombiq.Marketing.UrlShortener/Lombiq.Marketing.UrlShortener.csproj" />
+  <Project Path="Lombiq.Marketing/Lombiq.Marketing.csproj" />
+</Solution>

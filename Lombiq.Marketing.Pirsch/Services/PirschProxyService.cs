@@ -88,7 +88,7 @@ public class PirschProxyService : IPirschProxyService
                 "Failed to proxy the Pirsch script request for path {RequestPath}.",
                 _hca.HttpContext.Request.Path);
 
-            _hca.HttpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+            _hca.HttpContext.Response.BadGateway();
         }
     }
 
@@ -122,7 +122,7 @@ public class PirschProxyService : IPirschProxyService
                 "Failed to proxy the Pirsch request for path {RequestPath}.",
                 context.Request.Path);
 
-            context.Response.StatusCode = StatusCodes.Status502BadGateway;
+            context.Response.BadGateway();
         }
     }
 

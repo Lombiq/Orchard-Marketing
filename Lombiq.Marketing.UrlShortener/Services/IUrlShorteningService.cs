@@ -38,4 +38,9 @@ public interface IUrlShorteningService
     /// </summary>
     /// <param name="shortUrlContentItem">The content item to delete the mapping for.</param>
     Task DeleteShortUrlAsync(ContentItem shortUrlContentItem);
+
+    /// <summary>
+    /// Deletes the short URL mapping for the provided relative URL.
+    /// </summary>
+    Task DeleteShortUrlAsync(string url);
 }

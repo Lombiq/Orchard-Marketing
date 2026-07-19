@@ -97,10 +97,13 @@ public class UrlShorteningService : IUrlShorteningService
     }
 
     public Task DeleteShortUrlAsync(ContentItem shortUrlContentItem) =>
-        InvalidateShortUrlCacheAsync(shortUrlContentItem.As<ShortUrlPart>().ShortUrl.Text);
+        InvalidateShortUrlCacheAsync(shortUrlContentItem.GetOrCreate<ShortUrlPart>().ShortUrl.Text);
+
+    public Task DeleteShortUrlAsync(string url) =>
+        InvalidateShortUrlCacheAsync(url);
 
     private ShortUrlTargetUrls SetCache(ContentItem shortUrlContentItem) =>
-        SetCache(shortUrlContentItem.As<ShortUrlPart>());
+        SetCache(shortUrlContentItem.GetOrCreate<ShortUrlPart>());
 
     private ShortUrlTargetUrls SetCache(ShortUrlPart shortUrlPart)
     {
@@ -115,8 +118,8 @@ public class UrlShorteningService : IUrlShorteningService
 
     private static ShortUrlTargetUrls BuildTargetUrls(ContentItem shortUrlContentItem)
     {
-        var shortUrlPart = shortUrlContentItem.As<ShortUrlPart>();
-        var utmPart = shortUrlContentItem.As<UtmPart>();
+        var shortUrlPart = shortUrlContentItem.GetOrCreate<ShortUrlPart>();
+        var utmPart = shortUrlContentItem.GetOrCreate<UtmPart>();
 
         return new ShortUrlTargetUrls
         {

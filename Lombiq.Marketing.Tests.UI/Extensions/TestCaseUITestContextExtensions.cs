@@ -1,11 +1,14 @@
+using AngleSharp.Dom;
 using Atata;
+using Lombiq.HelpfulLibraries.Common.Utilities;
+using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using OpenQA.Selenium;
 using Shouldly;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -26,9 +29,7 @@ public static class TestCaseUITestContextExtensions
         await context.EnableFeatureDirectlyAsync("Lombiq.Marketing.UrlShortener");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-
-        await context.ClickReliablyOnByLinkTextAsync("Tools");
-        await context.ClickReliablyOnByLinkTextAsync("Short URLs");
+        await context.ClickThroughAdminMenuAsync("tools", "shorturls");
         await context.ClickReliablyOnByLinkTextAsync("New Short URL");
 
         await context.FillShortUrlFieldAsync("ShortUrlPart_ShortUrl_Text", shortUrl);
@@ -128,11 +129,7 @@ public static class TestCaseUITestContextExtensions
         AssertPirschSnippet(context.Driver.PageSource, "pianjs", "test");
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-
-        await context.ClickReliablyOnByLinkTextAsync("Configuration");
-        await context.ClickReliablyOnByLinkTextAsync("Settings");
-        await context.ClickReliablyOnByLinkTextAsync("Marketing");
-        await context.ClickReliablyOnByLinkTextAsync("Pirsch");
+        await context.ClickThroughAdminMenuAsync("settings", "marketing", "marketing-pirsch");
 
         await context.ClickAndFillInWithRetriesAsync(
             By.Id("ISite_PirschSettings_ClientSideCodeSnippet"),
@@ -146,7 +143,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToAdminRelativeUrlAsync("/Settings/PirschSettings");
         await context.ClickAndFillInWithRetriesAsync(By.Id("ISite_PirschSettings_DataDev"), "newDataDev");
-        await context.ClickReliablyOnSubmitAsync();
+        await context.ClickReliablyOnSubmitAsync(withJavaScript: true); // This click has been flaky before.
         context.ShouldBeSuccess();
 
         await context.GoToHomePageAsync();
@@ -159,9 +156,7 @@ public static class TestCaseUITestContextExtensions
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.ResponseLogFilter = e =>
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/secret-sauce/pv", 404);
-
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/secret-sauce/pv");
         configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
             {
@@ -182,13 +177,11 @@ public static class TestCaseUITestContextExtensions
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry => IsUnexpectedAppLog(logEntry), configuration.TestCancellationToken);
 
-        configuration.ResponseLogFilter = e =>
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url", 404) &&
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/jmp/marketing-short-url-updated", 404);
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url");
+        configuration.WithIgnoreExpectedNotFoundResponseFilter("/jmp/marketing-short-url-updated");
     }
 
     private static bool IsUnexpectedAppLog(IApplicationLogEntry logEntry) =>
-        AppLogAssertionHelper.NotMediaCacheEntries(logEntry) &&
         logEntry.Level >= LogLevel.Error &&
         !IsExpectedPirschShortUrlError(logEntry);
 
@@ -209,12 +202,17 @@ public static class TestCaseUITestContextExtensions
         string id,
         string dataDev)
     {
-        pageSource.ShouldContain($"id=\"{id}\"");
-        pageSource.ShouldContain("src=\"/secret-sauce/sauce.js\"");
-        pageSource.ShouldContain("data-hit-endpoint=\"/secret-sauce/pv\"");
-        pageSource.ShouldContain("data-event-endpoint=\"/secret-sauce/e\"");
-        pageSource.ShouldContain("data-session-endpoint=\"/secret-sauce/s\"");
-        pageSource.ShouldContain("data-code=\"test\"");
-        pageSource.ShouldContain($"data-dev=\"{dataDev}\"");
+        var document = HtmlHelper.ParseHtmlFragment(pageSource);
+        var node = document
+            .Descendants<Element>()
+            .FirstOrDefault(element => element.Id == id)
+            .ShouldNotBeNull();
+
+        node.GetAttribute("src").ShouldBe(PirschProxyConstants.ProxyScriptPath);
+        node.GetAttribute("data-hit-endpoint").ShouldBe(PirschProxyConstants.ProxyPageViewPath);
+        node.GetAttribute("data-event-endpoint").ShouldBe(PirschProxyConstants.ProxyEventPath);
+        node.GetAttribute("data-session-endpoint").ShouldBe(PirschProxyConstants.ProxySessionPath);
+        node.GetAttribute("data-code").ShouldBe("test");
+        node.GetAttribute("data-dev").ShouldBe(dataDev);
     }
 }

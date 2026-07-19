@@ -1,37 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
-
+<Project>
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <DefaultItemExcludes>$(DefaultItemExcludes);.git*</DefaultItemExcludes>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.props" />
+  <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="2.0.0" />
+
   <PropertyGroup>
     <Title>Lombiq Marketing - Pirsch for Orchard Core</Title>
-    <Authors>Lombiq Technologies</Authors>
-    <Copyright>Copyright © 2026, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq Marketing - Pirsch for Orchard Core: Pirsch analytics integration with client-side tracking, first-party proxying, and server-side hit reporting.</Description>
-    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <CopyrightYear>2026</CopyrightYear>
+    <DescriptionBody>Pirsch analytics integration with client-side tracking, first-party proxying, and server-side hit reporting.</DescriptionBody>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Marketing;Analytics;Tracking;Pirsch</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Orchard-Marketing</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Orchard-Marketing/blob/dev/Lombiq.Marketing.Pirsch/Readme.md</PackageProjectUrl>
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Readme.md" />
-    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
-    <PackageReference Include="AngleSharp" Version="1.5.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lombiq.Marketing.UrlShortener\Lombiq.Marketing.UrlShortener.csproj" />
@@ -43,7 +26,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="9.0.0" />
+    <PackageReference Include="Lombiq.Hosting.Tenants.Maintenance" Version="10.0.0" />
   </ItemGroup>
 
+  <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />
+  <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.targets" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="2.0.0" />
 </Project>
