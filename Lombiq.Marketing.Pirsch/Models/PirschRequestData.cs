@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Lombiq.Marketing.Pirsch.Models;
@@ -48,5 +49,6 @@ public class PirschRequestData
     public bool? DisableBotFilter { get; set; }
 
     [JsonPropertyName("tags")]
-    public IDictionary<string, string>? Tags { get; private set; } = new Dictionary<string, string>();
+    [SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Necessary for deserialization.")]
+    public IDictionary<string, string>? Tags { get; set; } = new Dictionary<string, string>();
 }

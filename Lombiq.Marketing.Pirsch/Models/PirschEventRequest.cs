@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Lombiq.Marketing.Pirsch.Models;
@@ -15,7 +16,8 @@ public sealed class PirschEventRequest : PirschRequestData
     public int? EventDuration { get; set; }
 
     [JsonPropertyName("event_meta")]
-    public IDictionary<string, string>? EventMeta { get; private set; } = new Dictionary<string, string>();
+    [SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Necessary for deserialization.")]
+    public IDictionary<string, string>? EventMeta { get; set; } = new Dictionary<string, string>();
 
     [JsonPropertyName("non_interactive")]
     public bool? NonInteractive { get; set; }
