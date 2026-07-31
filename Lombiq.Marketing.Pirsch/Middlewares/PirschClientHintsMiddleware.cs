@@ -18,7 +18,7 @@ public sealed class PirschClientHintsMiddleware
     private const string PermissionsPolicyHeaderValue =
         @"ch-ua=(self ""https://api.pirsch.io""), ch-ua-mobile=(self ""https://api.pirsch.io""), " +
         @"ch-ua-platform=(self ""https://api.pirsch.io""), ch-ua-platform-version=(self ""https://api.pirsch.io""), " +
-        @"ch-width=(self ""https://api.pirsch.io""), ch-viewport-width=(self ""https://api.pirsch.io""), ";
+        @"ch-width=(self ""https://api.pirsch.io""), ch-viewport-width=(self ""https://api.pirsch.io"")";
 
     private readonly RequestDelegate _next;
 
