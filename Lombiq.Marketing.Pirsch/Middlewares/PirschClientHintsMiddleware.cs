@@ -9,12 +9,16 @@ public sealed class PirschClientHintsMiddleware
     private const string AcceptChHeaderName = "Accept-CH";
     private const string PermissionsPolicyHeaderName = "Permissions-Policy";
 
+    // The AcceptChHeaderValue and PermissionsPolicyHeaderValue values might change. Update them from
+    // https://docs.pirsch.io/get-started/client-hints if necessary.
     private const string AcceptChHeaderValue =
         "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-Width, Sec-CH-Viewport-Width, Width, Viewport-Width";
 
     private const string PermissionsPolicyHeaderValue =
-        "ch-ua=(self), ch-ua-mobile=(self), ch-ua-platform=(self), ch-ua-platform-version=(self), ch-width=(self), " +
-        "ch-viewport-width=(self), width=(self), viewport-width=(self)";
+        @"ch-ua=(self ""https://api.pirsch.io""), ch-ua-mobile=(self ""https://api.pirsch.io""), " +
+        @"ch-ua-platform=(self ""https://api.pirsch.io""), ch-ua-platform-version=(self ""https://api.pirsch.io""), " +
+        @"ch-width=(self ""https://api.pirsch.io""), ch-viewport-width=(self ""https://api.pirsch.io""), " +
+        @"width=(self ""https://api.pirsch.io""), viewport-width=(self ""https://api.pirsch.io"")";
 
     private readonly RequestDelegate _next;
 
