@@ -10,8 +10,9 @@ public sealed class PirschClientHintsMiddleware
     private const string PermissionsPolicyHeaderName = "Permissions-Policy";
 
     // The AcceptChHeaderValue and PermissionsPolicyHeaderValue values might change. Update them from
-    // https://docs.pirsch.io/get-started/client-hints if necessary. `width` and `viewport-width` can be omitted,
-    // because those are only for older browsers and will cause a console warning in Chrome.
+    // https://github.com/pirsch-analytics/docs/blob/master/docs/get-started/client-hints.md if necessary (check the git
+    // history since the line below was updated). `width` and `viewport-width` can be omitted, because those are only
+    // for older browsers and will cause a console warning in Chrome.
     private const string AcceptClientHintsHeaderValue =
         "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-Width, Sec-CH-Viewport-Width, Width, Viewport-Width";
 
