@@ -11,7 +11,7 @@ public sealed class PirschClientHintsMiddleware
 
     // The AcceptChHeaderValue and PermissionsPolicyHeaderValue values might change. Update them from
     // https://docs.pirsch.io/get-started/client-hints if necessary. `width` and `viewport-width` can be omitted,
-    // because those are only for older browser and will cause a console warning in Chrome.
+    // because those are only for older browsers and will cause a console warning in Chrome.
     private const string AcceptClientHintsHeaderValue =
         "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-Width, Sec-CH-Viewport-Width, Width, Viewport-Width";
 
