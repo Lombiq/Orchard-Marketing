@@ -48,5 +48,5 @@ public class PirschRequestData
     public bool? DisableBotFilter { get; set; }
 
     [JsonPropertyName("tags")]
-    public IDictionary<string, string>? Tags { get; private set; } = new Dictionary<string, string>();
+    public IDictionary<string, string>? Tags { get; init; } = new Dictionary<string, string>();
 }

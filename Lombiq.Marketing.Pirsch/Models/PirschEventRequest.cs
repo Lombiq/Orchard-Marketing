@@ -15,7 +15,7 @@ public sealed class PirschEventRequest : PirschRequestData
     public int? EventDuration { get; set; }
 
     [JsonPropertyName("event_meta")]
-    public IDictionary<string, string>? EventMeta { get; private set; } = new Dictionary<string, string>();
+    public IDictionary<string, string>? EventMeta { get; init; } = new Dictionary<string, string>();
 
     [JsonPropertyName("non_interactive")]
     public bool? NonInteractive { get; set; }
