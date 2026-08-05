@@ -6,13 +6,13 @@ namespace Lombiq.Marketing.Pirsch.Middlewares;
 
 public sealed class PirschClientHintsMiddleware
 {
-    private const string AcceptChHeaderName = "Accept-CH";
+    private const string AcceptClientHintsHeaderName = "Accept-CH";
     private const string PermissionsPolicyHeaderName = "Permissions-Policy";
 
     // The AcceptChHeaderValue and PermissionsPolicyHeaderValue values might change. Update them from
     // https://docs.pirsch.io/get-started/client-hints if necessary. `width` and `viewport-width` can be omitted,
     // because those are only for older browser and will cause a console warning in Chrome.
-    private const string AcceptChHeaderValue =
+    private const string AcceptClientHintsHeaderValue =
         "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-Width, Sec-CH-Viewport-Width, Width, Viewport-Width";
 
     private const string PermissionsPolicyHeaderValue =
@@ -34,7 +34,7 @@ public sealed class PirschClientHintsMiddleware
 
         context.Response.OnStarting(() =>
         {
-            AppendHeader(context.Response.Headers, AcceptChHeaderName, AcceptChHeaderValue);
+            AppendHeader(context.Response.Headers, AcceptClientHintsHeaderName, AcceptClientHintsHeaderValue);
             AppendHeader(context.Response.Headers, PermissionsPolicyHeaderName, PermissionsPolicyHeaderValue);
 
             return Task.CompletedTask;
