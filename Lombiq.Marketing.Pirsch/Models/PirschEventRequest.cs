@@ -17,7 +17,7 @@ public sealed class PirschEventRequest : PirschRequestData
 
     [JsonPropertyName("event_meta")]
     [SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Necessary for deserialization.")]
-    public IDictionary<string, string>? EventMeta { get; set; } = new Dictionary<string, string>();
+    public IDictionary<string, string>? EventMeta { get; init; } = new Dictionary<string, string>();
 
     [JsonPropertyName("non_interactive")]
     public bool? NonInteractive { get; set; }

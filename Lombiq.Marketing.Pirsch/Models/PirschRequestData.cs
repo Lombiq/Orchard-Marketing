@@ -49,6 +49,5 @@ public class PirschRequestData
     public bool? DisableBotFilter { get; set; }
 
     [JsonPropertyName("tags")]
-    [SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Necessary for deserialization.")]
-    public IDictionary<string, string>? Tags { get; set; } = new Dictionary<string, string>();
+    public IDictionary<string, string>? Tags { get; init; } = new Dictionary<string, string>();
 }
