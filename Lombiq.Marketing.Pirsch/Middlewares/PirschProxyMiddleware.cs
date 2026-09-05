@@ -1,7 +1,6 @@
 using Lombiq.Marketing.Pirsch.Constants;
 using Lombiq.Marketing.Pirsch.Services;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Pirsch.Middlewares;
@@ -19,13 +18,13 @@ public sealed class PirschProxyMiddleware
             return _next(context);
         }
 
-        var path = context.Request.Path.ToString();
-
-        if (path.EndsWithOrdinalIgnoreCase(PirschProxyConstants.ProxyScriptPath)) { return pirschProxyService.ProxyScriptAsync(); }
-        if (path.EndsWithOrdinalIgnoreCase(PirschProxyConstants.ProxyPageViewPath)) { return pirschProxyService.ProxyPageViewAsync(); }
-        if (path.EndsWithOrdinalIgnoreCase(PirschProxyConstants.ProxyEventPath)) { return pirschProxyService.ProxyEventAsync(); }
-        if (path.EndsWithOrdinalIgnoreCase(PirschProxyConstants.ProxySessionPath)) { return pirschProxyService.ProxySessionAsync(); }
-
-        return context.NotFoundAsync();
+        return context.Request.Path.ToString() switch
+        {
+            PirschProxyConstants.ProxyScriptPath => pirschProxyService.ProxyScriptAsync(),
+            PirschProxyConstants.ProxyPageViewPath => pirschProxyService.ProxyPageViewAsync(),
+            PirschProxyConstants.ProxyEventPath => pirschProxyService.ProxyEventAsync(),
+            PirschProxyConstants.ProxySessionPath => pirschProxyService.ProxySessionAsync(),
+            _ => context.NotFoundAsync(),
+        };
     }
 }
