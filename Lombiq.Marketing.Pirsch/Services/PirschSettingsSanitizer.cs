@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Pirsch.Services;
 
-public class PirschSettingsSanitizer
+public static class PirschSettingsSanitizer
 {
     private static readonly PirschScriptMarkupFormatter _formatter = new();
 
@@ -55,15 +55,6 @@ public class PirschSettingsSanitizer
     public static string SanitizeClientSideCodeSnippet(string? snippetHtml) =>
         SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper: null);
 
-    public static async Task<string> SanitizeClientSideCodeSnippetAsync(string? snippetHtml, HttpContext? httpContext)
-    {
-        var actionContext = httpContext == null ? null : await httpContext.GetActionContextAsync();
-        var urlHelperFactory = httpContext?.RequestServices.GetService<IUrlHelperFactory>();
-        var urlHelper = actionContext == null ? null : urlHelperFactory?.GetUrlHelper(actionContext);
-
-        return SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper);
-    }
-
     public static string SanitizeClientSideCodeSnippet(string? snippetHtml, HttpContext? httpContext)
     {
         IUrlHelper? urlHelper = null;
@@ -79,6 +70,15 @@ public class PirschSettingsSanitizer
 
             urlHelper = httpContext.RequestServices.GetService<IUrlHelperFactory>()?.GetUrlHelper(actionContext);
         }
+
+        return SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper);
+    }
+
+    public static async Task<string> SanitizeClientSideCodeSnippetAsync(string? snippetHtml, HttpContext? httpContext)
+    {
+        var actionContext = httpContext == null ? null : await httpContext.GetActionContextAsync();
+        var urlHelperFactory = httpContext?.RequestServices.GetService<IUrlHelperFactory>();
+        var urlHelper = actionContext == null ? null : urlHelperFactory?.GetUrlHelper(actionContext);
 
         return SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper);
     }
