@@ -2,6 +2,12 @@ using AngleSharp.Dom;
 using AngleSharp.Html;
 using AngleSharp.Html.Parser;
 using Lombiq.Marketing.Pirsch.Constants;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,8 +50,14 @@ public static class PirschSettingsSanitizer
         "data-domain",
     };
 
-    public static string SanitizeClientSideCodeSnippet(string? snippetHtml)
+    public static string SanitizeClientSideCodeSnippet(string? snippetHtml) =>
+        SanitizeClientSideCodeSnippet(snippetHtml, httpContext: null);
+
+    public static string SanitizeClientSideCodeSnippet(string? snippetHtml, HttpContext? httpContext)
     {
+        static string GetUri(IUrlHelper? urlHelper, string path) =>
+            urlHelper?.Content('~' + path) is { Length: > 0 } url ? url : path; 
+
         if (string.IsNullOrWhiteSpace(snippetHtml)) return string.Empty;
 
         var script = new HtmlParser()
@@ -62,10 +74,21 @@ public static class PirschSettingsSanitizer
 
         foreach (var attributeName in removeAttributes) script.RemoveAttribute(attributeName);
 
-        SetProxyAttribute(script, "src", PirschProxyConstants.ProxyScriptPath);
-        SetProxyAttribute(script, "data-hit-endpoint", PirschProxyConstants.ProxyPageViewPath);
-        SetProxyAttribute(script, "data-event-endpoint", PirschProxyConstants.ProxyEventPath);
-        SetProxyAttribute(script, "data-session-endpoint", PirschProxyConstants.ProxySessionPath);
+        IUrlHelper? urlHelper = null;
+        if (httpContext != null)
+        {
+            var routeData = new RouteData();
+            routeData.Routers.Add(new RouteCollection());
+            var actionContext = new ActionContext(httpContext, routeData, new ActionDescriptor());
+
+            var factory = httpContext.RequestServices.GetRequiredService<IUrlHelperFactory>();
+            urlHelper = factory.GetUrlHelper(actionContext);
+        }
+
+        SetProxyAttribute(script, "src", GetUri(urlHelper, PirschProxyConstants.ProxyScriptPath));
+        SetProxyAttribute(script, "data-hit-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxyPageViewPath));
+        SetProxyAttribute(script, "data-event-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxyEventPath));
+        SetProxyAttribute(script, "data-session-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxySessionPath));
         script.TextContent = string.Empty;
 
         return SerializeScript(script);

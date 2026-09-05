@@ -1,4 +1,5 @@
 using Lombiq.Marketing.Pirsch.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OrchardCore.Settings;
 
@@ -6,9 +7,14 @@ namespace Lombiq.Marketing.Pirsch.Services;
 
 public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettings>
 {
+    private readonly IHttpContextAccessor _hca;
     private readonly ISiteService _siteService;
 
-    public PirschSettingsConfiguration(ISiteService siteService) => _siteService = siteService;
+    public PirschSettingsConfiguration(IHttpContextAccessor hca, ISiteService siteService)
+    {
+        _hca = hca;
+        _siteService = siteService;
+    }
 
     public void Configure(PirschSettings options)
     {
@@ -21,7 +27,7 @@ public sealed class PirschSettingsConfiguration : IConfigureOptions<PirschSettin
 
         options.ClientSideCodeSnippet = !string.IsNullOrWhiteSpace(settings.ClientSideCodeSnippet)
             ? settings.ClientSideCodeSnippet
-            : PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(options.ClientSideCodeSnippet);
+            : PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(options.ClientSideCodeSnippet, _hca.HttpContext);
 
         if (!string.IsNullOrWhiteSpace(settings.DataDev))
         {

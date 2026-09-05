@@ -68,7 +68,10 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
             section.ClientSecret = viewModel.ClientSecret;
         }
 
-        section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
+        section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(
+            viewModel.ClientSideCodeSnippet,
+            _httpContextAccessor.HttpContext);
+
         section.DataDev = viewModel.DataDev ?? string.Empty;
         section.AutoRenderZone = viewModel.AutoRenderZone ?? string.Empty;
     }
