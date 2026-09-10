@@ -38,12 +38,14 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
 
         return Initialize<PirschSettingsViewModel>(
             $"{nameof(PirschSettings)}_Edit",
-            viewModel =>
+            async viewModel =>
             {
                 viewModel.ClientSecret = string.Empty;
                 viewModel.HasClientSecret = !string.IsNullOrWhiteSpace(section.ClientSecret);
                 viewModel.ClearClientSecret = false;
-                viewModel.ClientSideCodeSnippet = section.ClientSideCodeSnippet;
+                viewModel.ClientSideCodeSnippet = await PirschSettingsSanitizer.SanitizeClientSideCodeSnippetAsync(
+                    section.ClientSideCodeSnippet,
+                    _httpContextAccessor.HttpContext);
                 viewModel.DataDev = section.DataDev;
                 viewModel.AutoRenderZone = section.AutoRenderZone;
             })
@@ -68,7 +70,10 @@ public sealed class PirschSettingsDriver : ClientSideTrackingSiteDisplayDriver<P
             section.ClientSecret = viewModel.ClientSecret;
         }
 
-        section.ClientSideCodeSnippet = PirschSettingsSanitizer.SanitizeClientSideCodeSnippet(viewModel.ClientSideCodeSnippet);
+        section.ClientSideCodeSnippet = await PirschSettingsSanitizer.SanitizeClientSideCodeSnippetAsync(
+            viewModel.ClientSideCodeSnippet,
+            _httpContextAccessor.HttpContext);
+
         section.DataDev = viewModel.DataDev ?? string.Empty;
         section.AutoRenderZone = viewModel.AutoRenderZone ?? string.Empty;
     }

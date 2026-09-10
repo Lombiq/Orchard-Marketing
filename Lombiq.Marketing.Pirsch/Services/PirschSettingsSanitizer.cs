@@ -1,11 +1,18 @@
 using AngleSharp.Dom;
 using AngleSharp.Html;
 using AngleSharp.Html.Parser;
+using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Marketing.Pirsch.Constants;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.DisplayManagement.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lombiq.Marketing.Pirsch.Services;
 
@@ -44,8 +51,43 @@ public static class PirschSettingsSanitizer
         "data-domain",
     };
 
-    public static string SanitizeClientSideCodeSnippet(string? snippetHtml)
+    [Obsolete($"Use the instance overload with {nameof(HttpContext)}.")]
+    public static string SanitizeClientSideCodeSnippet(string? snippetHtml) =>
+        SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper: null);
+
+    public static string SanitizeClientSideCodeSnippet(string? snippetHtml, HttpContext? httpContext)
     {
+        IUrlHelper? urlHelper = null;
+        if (httpContext != null)
+        {
+            // If the action context was already created by httpContext.GetActionContextAsync() somewhere else, then
+            // getting it from the HTTP context is the fastest way. Outside of that, creating a new action context with
+            // the current HTTP context but an empty route table is preferable over using Orchard Core's built-in
+            // httpContext.GetActionContextAsync() extension method, because we are only going to use this for
+            // urlHelper.Content(), and it's good to avoid sync-over-async code that can cause deadlocks.
+            var actionContext = httpContext.Items.GetMaybe<ActionContext>("OrchardCore:ActionContext") ??
+                httpContext.CreateActionContextWithoutRouteData();
+
+            urlHelper = httpContext.RequestServices.GetService<IUrlHelperFactory>()?.GetUrlHelper(actionContext);
+        }
+
+        return SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper);
+    }
+
+    public static async Task<string> SanitizeClientSideCodeSnippetAsync(string? snippetHtml, HttpContext? httpContext)
+    {
+        var actionContext = httpContext == null ? null : await httpContext.GetActionContextAsync();
+        var urlHelperFactory = httpContext?.RequestServices.GetService<IUrlHelperFactory>();
+        var urlHelper = actionContext == null ? null : urlHelperFactory?.GetUrlHelper(actionContext);
+
+        return SanitizeClientSideCodeSnippetInternal(snippetHtml, urlHelper);
+    }
+
+    private static string SanitizeClientSideCodeSnippetInternal(string? snippetHtml, IUrlHelper? urlHelper)
+    {
+        static string GetUri(IUrlHelper? urlHelper, string path) =>
+            urlHelper?.Content('~' + path) is { Length: > 0 } url ? url : path;
+
         if (string.IsNullOrWhiteSpace(snippetHtml)) return string.Empty;
 
         var script = new HtmlParser()
@@ -62,10 +104,10 @@ public static class PirschSettingsSanitizer
 
         foreach (var attributeName in removeAttributes) script.RemoveAttribute(attributeName);
 
-        SetProxyAttribute(script, "src", PirschProxyConstants.ProxyScriptPath);
-        SetProxyAttribute(script, "data-hit-endpoint", PirschProxyConstants.ProxyPageViewPath);
-        SetProxyAttribute(script, "data-event-endpoint", PirschProxyConstants.ProxyEventPath);
-        SetProxyAttribute(script, "data-session-endpoint", PirschProxyConstants.ProxySessionPath);
+        SetProxyAttribute(script, "src", GetUri(urlHelper, PirschProxyConstants.ProxyScriptPath));
+        SetProxyAttribute(script, "data-hit-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxyPageViewPath));
+        SetProxyAttribute(script, "data-event-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxyEventPath));
+        SetProxyAttribute(script, "data-session-endpoint", GetUri(urlHelper, PirschProxyConstants.ProxySessionPath));
         script.TextContent = string.Empty;
 
         return SerializeScript(script);
