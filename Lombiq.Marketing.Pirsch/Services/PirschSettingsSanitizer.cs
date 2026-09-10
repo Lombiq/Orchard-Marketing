@@ -58,16 +58,8 @@ public static class PirschSettingsSanitizer
     public static string SanitizeClientSideCodeSnippet(string? snippetHtml, HttpContext? httpContext)
     {
         IUrlHelper? urlHelper = null;
-        if (httpContext != null)
+        if (httpContext?.Items.GetMaybe<ActionContext>("OrchardCore:ActionContext") is { } actionContext)
         {
-            // If the action context was already created by httpContext.GetActionContextAsync() somewhere else, then
-            // getting it from the HTTP context is the fastest way. Outside of that, creating a new action context with
-            // the current HTTP context but an empty route table is preferable over using Orchard Core's built-in
-            // httpContext.GetActionContextAsync() extension method, because we are only going to use this for
-            // urlHelper.Content(), and it's good to avoid sync-over-async code that can cause deadlocks.
-            var actionContext = httpContext.Items.GetMaybe<ActionContext>("OrchardCore:ActionContext") ??
-                httpContext.CreateActionContextWithoutRouteData();
-
             urlHelper = httpContext.RequestServices.GetService<IUrlHelperFactory>()?.GetUrlHelper(actionContext);
         }
 
